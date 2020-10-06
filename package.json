@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsc -watch | nodemon _transpiled/server.js",
     "transpile": "tsc",
-    "build": "tsc && webpack"
+    "build": "tsc && webpack",
+    "start": "pm2-runtime start dist/server.bundle.js -i 4 --name m2"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "express-sslify": "^1.2.0",
     "graphql": "^15.3.0",
     "helmet": "^4.1.1",
+    "pm2": "^4.5.0",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.0.0"
   },
