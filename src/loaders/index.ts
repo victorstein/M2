@@ -1,39 +1,28 @@
 import { Application } from 'express'
-import apolloLoader from './apolloLoader'
-import expressLoader from './expressLoader'
-import sentryLoader from './sentryLoader'
+import { Service } from 'typedi'
+import ApolloLoader from './apolloLoader'
+import SentryLoader from './sentryLoader'
 
+@Service()
 class Loaders {
-  // Loaders
-  apollo: any
-  express: any
-  sentry: any
-
-  constructor () {
-    this.apollo = apolloLoader
-    this.express = expressLoader
-    this.sentry = sentryLoader
-  }
+  constructor (
+    private sentry: SentryLoader,
+    private apollo: ApolloLoader
+  ) {}
 
   async load (): Promise<Application> {
     try {
       // Start Sentry
-      this.sentry()
+      this.sentry.start()
 
-      // Start the express server
-      const app = this.express()
-
-      // Start the apollo instance
-      await this.apollo(app)
+      // Start the Apollo Instance
+      const app = await this.apollo.start()
 
       return app
     } catch (e) {
-      console.log(e.message)
-      throw new Error('There was an error initializing your loaders 💥')
+      throw new Error(`There was an error initializing your loaders 💥 -> ${e.message}`)
     }
   }
 }
 
-const initializedLoaders = new Loaders()
-
-export default initializedLoaders
+export default Loaders
