@@ -64,7 +64,6 @@ jobs:
       - name: Notify Slack
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_SECRET }}
-              - uses: abinoda/slack-action@master
-                with:
-                  args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Deploy!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Who?:* ${{ github.event.pull_request.user.login }}\"}}]}'
-        
+        uses: abinoda/slack-action@master
+        with:
+          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Deploy!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Who?:* ${{ github.event.pull_request.user.login }}\"}}]}'
