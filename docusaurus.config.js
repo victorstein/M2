@@ -1,17 +1,17 @@
 module.exports = {
-  title: 'My Site',
-  tagline: 'The tagline of my site',
-  url: 'https://your-docusaurus-test-site.com',
-  baseUrl: '/',
+  title: 'M2 TypeGraphQL Boilerplate',
+  tagline: 'The last API boilerplate I will ever need.',
+  url: 'https://victorstein.github.io',
+  baseUrl: '/M2/',
   onBrokenLinks: 'throw',
   favicon: 'img/favicon.ico',
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'victorstein',
+  projectName: 'M2',
   themeConfig: {
     navbar: {
-      title: 'My Site',
+      title: 'M2 TypeGraphQL Boilerplate',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'M2 TypeGraphQL Boilerplate',
         src: 'img/logo.svg',
       },
       items: [
@@ -21,9 +21,13 @@ module.exports = {
           label: 'Docs',
           position: 'left',
         },
-        {to: 'blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          to: 'blog',
+          label: 'Blog',
+          position: 'left'
+        },
+        {
+          href: 'https://github.com/victorstein/M2',
           label: 'GitHub',
           position: 'right',
         },
@@ -49,17 +53,9 @@ module.exports = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
-            },
+              label: 'Slack',
+              href: 'https://m2-j0e5519.slack.com/archives/C01CWNLSZ0U',
+            }
           ],
         },
         {
@@ -71,12 +67,12 @@ module.exports = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/victorstein/M2',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} M2. Built with Docusaurus.`,
     },
   },
   presets: [
