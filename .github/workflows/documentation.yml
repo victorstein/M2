@@ -33,6 +33,12 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
+      - name: Start deploy notification
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_SECRET }}
+        uses: abinoda/slack-action@master
+        with:
+          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Documentation deploy started!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Who?:* ${{ github.event.pull_request.user.login }}\"}}]}'
       - name: Add key to allow access to repository
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
@@ -51,8 +57,8 @@ jobs:
           USE_SSH: true
           GIT_USER: git
         run: |
-          git config --global user.email "actions@gihub.com"
-          git config --global user.name "gh-actions"
+          git config --global user.email "stein.hakase.vs@gmail.com"
+          git config --global user.name "victorstein"
           if [ -e yarn.lock ]; then
           yarn install --frozen-lockfile
           elif [ -e package-lock.json ]; then
