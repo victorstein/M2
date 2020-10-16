@@ -73,7 +73,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_SECRET }}
         uses: abinoda/slack-action@master
         with:
-          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Deploy SUCCESS!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Submitter:* ${{ github.actor }}\"}}]}'
+          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*The new documentation is ready!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<https://victorstein.github.io/M2|View Pull Request>\"}}]}'
       - name: Notify Slack FAILURE
         if: ${{ failure() }}
         env:
