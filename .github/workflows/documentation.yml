@@ -38,7 +38,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_SECRET }}
         uses: abinoda/slack-action@master
         with:
-          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Documentation deploy started!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Who?:* ${{ github.event.pull_request.user.login }}\"}}]}'
+          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Documentation deploy started!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Submitter:* ${{ github.actor }}\"}}]}'
       - name: Add key to allow access to repository
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
@@ -73,12 +73,12 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_SECRET }}
         uses: abinoda/slack-action@master
         with:
-          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Deploy SUCCESS!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Who?:* ${{ github.actor }}\"}}]}'
+          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Deploy SUCCESS!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Submitter:* ${{ github.actor }}\"}}]}'
       - name: Notify Slack FAILURE
         if: ${{ failure() }}
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_SECRET }}
         uses: abinoda/slack-action@master
         with:
-          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Deploy FAILED!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Who?:* ${{ github.actor }}\"}}]}'
+          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Deploy FAILED!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Submitter:* ${{ github.actor }}\"}}]}'
           
