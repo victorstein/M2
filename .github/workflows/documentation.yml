@@ -58,7 +58,7 @@ jobs:
           GIT_USER: git
         run: |
           git config --global user.email "stein.hakase.vs@gmail.com"
-          git config --global user.name "victorstein"
+          git config --global user.name "stein"
           if [ -e yarn.lock ]; then
           yarn install --frozen-lockfile
           elif [ -e package-lock.json ]; then
@@ -67,9 +67,18 @@ jobs:
           npm i
           fi
           npx docusaurus deploy
-      - name: Notify Slack
+      - name: Notify Slack SUCCESS
+        if: ${{ success() }}
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_SECRET }}
         uses: abinoda/slack-action@master
         with:
-          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Deploy!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Who?:* ${{ github.event.pull_request.user.login }}\"}}]}'
+          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Deploy SUCCESS!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Who?:* ${{ github.actor }}\"}}]}'
+      - name: Notify Slack FAILURE
+        if: ${{ failure() }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_SECRET }}
+        uses: abinoda/slack-action@master
+        with:
+          args: '{\"channel\":\"C01CMF9S6DB\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*New Deploy FAILED!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Who?:* ${{ github.actor }}\"}}]}'
+          
