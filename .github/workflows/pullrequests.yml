@@ -7,8 +7,7 @@ on:
 env:
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_SECRET }}
   PR_RELEASE_PATTERN: 'm2tgq-pr-'
-  PULL_REQUEST_SLACK: '{\"blocks\":[{\"type\":\"divider\"},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*There is a new Pull Request pending for review!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• Submitter: \\n ${{ github.event.pull_request.user.login }} \\n • Pull request title: \\n ${{ github.event.pull_request.title }}\\\"}} \\n • Pull Request link: \\n <${{ github.event.pull_request.html_url }}|View Pull Request>\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"> Quick heads-up! :male-scientist: \\n If the build succeeds, we will create a testable url for the PR.\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Have a good day! :wave:\"}},{\"type\":\"divider\"}]}'
-  ON_ERROR_SLACK: '{\"blocks\":[{\"type\":\"divider\"},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Oh no! Something went wrong with the pull request! :skull_and_crossbones:*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"> Quick heads-up! :boom: :construction_worker: \\n We are no longer building the test branch.\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"You may check the pull request at the following link: \\n <${{ github.event.pull_request.html_url }}|View Pull Request>\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Have a good day! :wave:\"}},{\"type\":\"divider\"}]}'
+  CHANNEL_ID: 'C01CTS1PLQP'
 
 jobs:
   check-PR:
@@ -21,7 +20,7 @@ jobs:
       - name: Send slack notification
         uses: abinoda/slack-action@master
         with:
-          args: ${{ env.PULL_REQUEST_SLACK }}
+          args: '{\"channel\":\" ${{ env.CHANNEL_ID }} \", \"blocks\":[{\"type\":\"divider\"},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*There is a new Pull Request pending for review!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• Submitter: \\n ${{ github.event.pull_request.user.login }} \\n • Pull request title: \\n ${{ github.event.pull_request.title }}\\\"}} \\n • Pull Request link: \\n <${{ github.event.pull_request.html_url }}|View Pull Request>\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"> Quick heads-up! :male-scientist: \\n If the build succeeds, we will create a testable url for the PR.\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Have a good day! :wave:\"}},{\"type\":\"divider\"}]}'
 
       - name: Test the pull request
         run: |
@@ -40,10 +39,10 @@ jobs:
         if: ${{ success() }}
         uses: abinoda/slack-action@master
         with:
-          args: ${{ env.ON_SUCCESS_SLACK }}
+          args: '{\"channel\":\" ${{ env.CHANNEL_ID }} \", \"blocks\":[{\"type\":\"divider\"},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Yaay! The build for the PR: ${{ github.event.pull_request.title }} has succeeded*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"> Quick heads-up! :construction_worker: \\n We are building a testable URL. \\n It will soon be available at the following link: <https://${{ env.PR_RELEASE_PATTERN }}${{ github.event.pull_request.number }}.herokuapp.com|View Proof of concept>\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Have a good day! :wave:\"}},{\"type\":\"divider\"}]}'
 
       - name: Notify Slack Failure
         if: ${{ failure() }}
         uses: abinoda/slack-action@master
         with:
-          args: '{\"blocks\":[{\"type\":\"divider\"},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Yaay! The build for the PR: ${{ github.event.pull_request.title }} has succeeded*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"> Quick heads-up! :construction_worker: \\n We are building a testable URL. \\n It will soon be available at the following link: <https://${{ env.PR_RELEASE_PATTERN }}${{ github.event.pull_request.number }}.herokuapp.com|View Proof of concept>\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Have a good day! :wave:\"}},{\"type\":\"divider\"}]}'
+          args: '{\"channel\":\" ${{ env.CHANNEL_ID }} \", \"blocks\":[{\"type\":\"divider\"},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Oh no! Something went wrong with the pull request! :skull_and_crossbones:*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"> Quick heads-up! :boom: :construction_worker: \\n We are no longer building the test branch.\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"You may check the pull request at the following link: \\n <${{ github.event.pull_request.html_url }}|View Pull Request>\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Have a good day! :wave:\"}},{\"type\":\"divider\"}]}'
