@@ -1,6 +1,6 @@
 import { Service } from "typedi"
 
-Service()
+@Service()
 export default class BaseService {
   hello (): String {
     return 'World'
