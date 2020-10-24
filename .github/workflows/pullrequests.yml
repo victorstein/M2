@@ -12,38 +12,39 @@ env:
   PR_RELEASE_PATTERN: 'm2tgq-pr-'
 
 jobs:
-  runs-on: unbuntu-latest
-  steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '12.x'
-    - name: Send slack notification
-      uses: abinoda/slack-action@master
-      with:
-        args: ${{ env.PULL_REQUEST_SLACK }}
+  check-PR:
+    runs-on: unbuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Send slack notification
+        uses: abinoda/slack-action@master
+        with:
+          args: ${{ env.PULL_REQUEST_SLACK }}
 
-    - name: Test the pull request
-      run: |
-        if [ -e yarn.lock ]; then
-        yarn install --frozen-lockfile
-        elif [ -e package-lock.json ]; then
-        npm ci
-        else
-        npm i
-        fi
-        if
-        npm run build --if-present
-        npm run test --if-present
-    
-    - name: Notify Slack Success
-      if: ${{ success() }}
-      uses: abinoda/slack-action@master
-      with:
-        args: ${{ env.ON_SUCCESS_SLACK }}
+      - name: Test the pull request
+        run: |
+          if [ -e yarn.lock ]; then
+          yarn install --frozen-lockfile
+          elif [ -e package-lock.json ]; then
+          npm ci
+          else
+          npm i
+          fi
+          if
+          npm run build --if-present
+          npm run test --if-present
+      
+      - name: Notify Slack Success
+        if: ${{ success() }}
+        uses: abinoda/slack-action@master
+        with:
+          args: ${{ env.ON_SUCCESS_SLACK }}
 
-    - name: Notify Slack Failure
-      if: ${{ failure() }}
-      uses: abinoda/slack-action@master
-      with:
-        args: ${{ env.ON_ERROR_SLACK }}
+      - name: Notify Slack Failure
+        if: ${{ failure() }}
+        uses: abinoda/slack-action@master
+        with:
+          args: ${{ env.ON_ERROR_SLACK }}
