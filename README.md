@@ -4,10 +4,7 @@ TypeGraphQL Boilerplate mark 2.
 
 ## Documentation
 
-Documentation of this project lives in the following URL:
-
-[Docs](https://victorstein.github.io/M2/)
-
+Documentation of this project lives [here](https://victorstein.github.io/M2/).
 Any contribution will be appreciated.
 
 ## Installation
