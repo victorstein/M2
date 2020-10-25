@@ -39,7 +39,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_SECRET }}
         uses: abinoda/slack-action@master
         with:
-          args: '{\"channel\":\"${{ env.CHANNEL_ID }}\", \"blocks\":[{\"type\":\"divider\"},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Yaay! The build for the PR: ${{ github.event.pull_request.title }} has succeeded*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"> Quick heads-up! :construction_worker: \n We are building a testable URL. \n It will soon be available at the following link: <https://${{ env.PR_RELEASE_PATTERN }}${{ github.event.pull_request.number }}.herokuapp.com|View Proof of concept>\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Have a good day! :wave:\"}},{\"type\":\"divider\"}]}'
+          args: '{\"channel\":\"${{ env.CHANNEL_ID }}\", \"blocks\":[{\"type\":\"divider\"},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Yaay! The build for the PR: _${{ github.event.pull_request.title }}_ has succeeded*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"> Quick heads-up! :construction_worker: \n We are building a testable URL. \n It will soon be available at the following link: <https://${{ env.PR_RELEASE_PATTERN }}${{ github.event.pull_request.number }}.herokuapp.com|View Proof of concept>\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Have a good day! :wave:\"}},{\"type\":\"divider\"}]}'
       - name: Notify Slack Failure
         if: ${{ failure() }}
         env:
