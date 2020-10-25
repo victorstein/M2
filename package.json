@@ -8,7 +8,7 @@
     "transpile": "tsc",
     "build": "tsc && webpack",
     "start": "pm2-runtime start dist/server.bundle.js -i 4 --name m2",
-    "test": "jest --detectOpenHandles"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
