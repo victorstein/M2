@@ -6,9 +6,12 @@ import config from '../config';
 export default class SentryLoader {
   dsn: string
   serverName: string
-  constructor () {
-    this.dsn = config.SENTRY_DSN
-    this.serverName = config.SENTRY_SERVER_NAME
+  constructor (
+    dsn: string = config.SENTRY_DSN,
+    serverName: string = config.SENTRY_SERVER_NAME
+  ) {
+    this.dsn = dsn
+    this.serverName = serverName
   }
 
   start () {
@@ -24,9 +27,8 @@ export default class SentryLoader {
         dsn: this.dsn,
         serverName: this.serverName
       }) 
-      console.log('Sentry Initialized successfuylly ✅')
+      console.log('Sentry Initialized successfully ✅')
     } catch (e) {
-      console.log(e)
       console.warn('Error Initializing Sentry: 🚨 ->', e.message)
     }
   }

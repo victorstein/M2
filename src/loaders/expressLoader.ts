@@ -26,7 +26,7 @@ export default class ExpressLoader {
         app.use(enforce.HTTPS({ trustProtoHeader: true }))
       }
 
-      console.log('Express Initialized successfuylly ✅')
+      console.log('Express Initialized successfully ✅')
 
       return app
     } catch (e) {

@@ -51,7 +51,7 @@ export default class ApolloLoader {
       // Apply the express app to the apollo server
       server.applyMiddleware({ app, cors: this.corsOptions })
       
-      console.log('Apollo Initialized successfuylly ✅')
+      console.log('Apollo Initialized successfully ✅')
       return app
     } catch (e) {
       console.log('Error initializing Apollo: 💥 ->', e.message)
