@@ -21,7 +21,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_SECRET }}
         uses: abinoda/slack-action@master
         with:
-          args: '{\"channel\":\"${{ env.CHANNEL_ID }}\", \"blocks\":[{\"type\":\"divider\"},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*There is a new Pull Request pending for review!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• Submitter:\n ${{ github.event.pull_request.user.login }}\n • Pull request title: \n ${{ github.event.pull_request.title }}\\\"}} \n • Pull Request link: \n <${{ github.event.pull_request.html_url }}|View Pull Request>\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"> Quick heads-up! :male-scientist: \n If the build succeeds, we will create a testable url for the PR.\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Have a good day! :wave:\"}},{\"type\":\"divider\"}]}'
+          args: '{\"channel\":\"${{ env.CHANNEL_ID }}\", \"blocks\":[{\"type\":\"divider\"},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*There is a new Pull Request pending for review!*\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• Submitter:\n ${{ github.event.pull_request.user.login }}\n\n • Pull request title: \n ${{ github.event.pull_request.title }} \n\n • Pull Request link: \n <${{ github.event.pull_request.html_url }}|View Pull Request>\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"> Quick heads-up! :male-scientist: \n If the build succeeds, we will create a testable url for the PR.\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Have a good day! :wave:\"}},{\"type\":\"divider\"}]}'
       - name: Test the pull request
         run: |
           if [ -e yarn.lock ]; then
