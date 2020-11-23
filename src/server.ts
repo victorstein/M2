@@ -37,9 +37,12 @@ class Init {
 
       // Start listening
       await this.listen(app, config.PORT)
+
+      // Server URL
+      const serverUrl = `http://localhost:${config.PORT}/graphql`
       
       // Alert that the server is already in place
-      console.log(`Server running at http://localhost:${config.PORT}/graphql 🚀`)
+      console.log(`Server running at ${serverUrl} 🚀`)
 
       // Handle 404
       app.use(notFound)
