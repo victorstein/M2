@@ -1,5 +1,5 @@
 import express, { json, Application } from 'express'
-import config from '../config'
+import config from 'config'
 import helmet from 'helmet'
 import enforce from 'express-sslify'
 import { Service } from 'typedi'
@@ -10,25 +10,22 @@ export default class ExpressLoader {
   app: Application
 
   constructor () {
-    this.env = config.ENV
     this.app = express()
   }
 
   start (): Application {
     try {
-      const app = express()
-
       // Basic security for production
-      if (this.env === 'production') {
-        app.use(helmet())
-        app.use(json({ limit: '200kb' }))
-        app.disable('x-powered-by')
-        app.use(enforce.HTTPS({ trustProtoHeader: true }))
+      if (config.ENV === 'production') {
+        this.app.use(helmet())
+        this.app.use(json({ limit: '200kb' }))
+        this.app.disable('x-powered-by')
+        this.app.use(enforce.HTTPS({ trustProtoHeader: true }))
       }
 
       console.log('Express Initialized successfully ✅')
 
-      return app
+      return this.app
     } catch (e) {
       console.log('Error initializing Express: 💥 ->', e.message)
       throw new Error(e)

@@ -1,10 +1,12 @@
-import { buildSchema } from "type-graphql"
+import { buildSchema, ContainerType, NonEmptyArray } from "type-graphql"
 import { ApolloServer, CorsOptions } from "apollo-server-express"
-import config from '../config'
-import resolvers from '../resolvers'
+import config from 'config'
+import resolvers from 'resolvers'
 import Container, { Service } from "typedi"
 import { Application } from "express"
-import ExpressLoader from "./expressLoader"
+import ExpressLoader from "loaders/expressLoader"
+import { GraphQLError, GraphQLSchema } from "graphql"
+import { ExpressContext } from "apollo-server-express/dist/ApolloServer"
 
 @Service()
 export default class ApolloLoader {
@@ -17,36 +19,58 @@ export default class ApolloLoader {
     }
   }
 
-  async start (): Promise<Application> {
+  async buildSchema (resolvers: NonEmptyArray<Function>, container: ContainerType): Promise<GraphQLSchema> {
     try {
-      // Create Schema
       const schema = await buildSchema({
         resolvers,
-        container: Container
+        container
       })
+      return schema
+    } catch (e) {
+      throw new Error(`Failed Building the schema: ${e.message}`)
+    }
+  }
 
+  formatError (err: GraphQLError): GraphQLError {
+    const message = err.message.toLowerCase()
+    /* Send class validator errors in graphQL Errors */
+    if (message.includes('argument validation error')) {
+      const error = err.extensions!.exception.validationErrors.map((u: any) => u.constraints)
+      err.message = error.flatMap((u : any) => Object.values(u))
+      err.extensions!.code = 'BAD_REQUEST'
+    }
+    return err
+  }
+
+  contextCreator (context: ExpressContext) {
+    const { req, res } = context
+    return { req, res }
+  }
+
+  async createApolloServer (): Promise<ApolloServer> {
+    try {
+      // Create Schema
+      const schema = await this.buildSchema(resolvers, Container)
+
+      return new ApolloServer({
+        context: this.contextCreator,
+        playground: config.ENV !== 'production',
+        schema,
+        debug: config.ENV !== 'production',
+        formatError: this.formatError
+      })
+    } catch (e) {
+      throw new Error(`Failed creating the server: ${e.message}`)
+    }
+  }
+
+  async start (): Promise<Application> {
+    try {
       // Create a express app
       const app = this.express.start()
 
       // Create the server
-      const server = new ApolloServer({
-        context: ({ req, res }) => {
-          return { req, res }
-        },
-        playground: config.ENV !== 'production',
-        schema,
-        debug: config.ENV !== 'production',
-        formatError: (err) => {
-          const message = err.message.toLowerCase()
-          /* Send class validator errors in graphQL Errors */
-          if (message.includes('argument validation error')) {
-            const error = err.extensions!.exception.validationErrors.map((u: any) => u.constraints)
-            err.message = error.flatMap((u : any) => Object.values(u))
-            err.extensions!.code = 'BAD_REQUEST'
-          }
-          return err
-        }
-      })
+      const server = await this.createApolloServer()
   
       // Apply the express app to the apollo server
       server.applyMiddleware({ app, cors: this.corsOptions })
