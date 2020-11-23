@@ -2,6 +2,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   collectCoverage: true,
+  modulePaths: ['<rootDir>/src'],
   displayName: {
     name: 'M2',
     color: 'cyan'
