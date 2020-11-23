@@ -1,5 +1,5 @@
-import config from '../../config'
-import SentryLoader from "../sentryLoader"
+import config from 'config'
+import SentryLoader from "loaders/sentryLoader"
 
 describe('Sentry Loader', () => {
   it('Should start without problems', () => {
@@ -17,9 +17,7 @@ describe('Sentry Loader', () => {
     sentry.start()
     expect(console.warn).toHaveBeenCalledWith('Error Initializing Sentry: 🚨 ->', 'Invalid Dsn')
   })
-})
 
-describe('Sentry Loader not production', () => {
   it('Should not run when environment is not production', () => {
     config.ENV = 'development'
     const sentry = new SentryLoader()
