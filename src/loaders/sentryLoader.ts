@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node'
 import { Service } from 'typedi';
-import config from '../config';
+import config from 'config';
 
 @Service()
 export default class SentryLoader {

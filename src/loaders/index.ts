@@ -1,7 +1,7 @@
 import { Application } from 'express'
 import { Service } from 'typedi'
-import ApolloLoader from './apolloLoader'
-import SentryLoader from './sentryLoader'
+import ApolloLoader from 'loaders/apolloLoader'
+import SentryLoader from 'loaders/sentryLoader'
 
 @Service()
 class Loaders {

@@ -1,5 +1,6 @@
-const path = require('path')
-const nodeExternals = require('webpack-node-externals')
+
+import path from 'path'
+import nodeExternals from 'webpack-node-externals'
 
 module.exports = {
   entry: {
@@ -8,6 +9,11 @@ module.exports = {
   output: {
     filename: 'server.bundle.js',
     path: path.resolve(__dirname, 'dist/')
+  },
+  resolve: {
+    modules: [
+      path.resolve(__dirname, '_transpiled')
+    ]
   },
   module: {
     rules: [{

@@ -1,4 +1,4 @@
-import BaseService from "../services/baseService";
+import BaseService from "services/baseService";
 import { Query, Resolver } from "type-graphql";
 import { Service } from "typedi";
 
