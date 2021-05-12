@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/node'
-import { Service } from 'typedi';
-import config from 'config';
+import { Service } from 'typedi'
+import config from 'config'
 
 @Service()
-export default class SentryLoader {
+class SentryLoader {
   dsn: string
   serverName: string
   constructor (
@@ -14,7 +14,7 @@ export default class SentryLoader {
     this.serverName = serverName
   }
 
-  start () {
+  start (): void {
     try {
       // If not in production don't activate Sentry
       if (config.ENV !== 'production') {
@@ -26,10 +26,12 @@ export default class SentryLoader {
       Sentry.init({
         dsn: this.dsn,
         serverName: this.serverName
-      }) 
+      })
       console.log('Sentry Initialized successfully ✅')
     } catch (e) {
       console.warn('Error Initializing Sentry: 🚨 ->', e.message)
     }
   }
 }
+
+export default SentryLoader

@@ -3,9 +3,10 @@ import config from './config'
 import notFound from './middlewares/notFound'
 import Loaders from './loaders'
 import * as Sentry from '@sentry/node'
-import Container, { Inject } from 'typedi'
+import Container, { Inject, Service } from 'typedi'
 import { Application } from 'express'
 
+@Service()
 class Init {
   @Inject()
   loaders: Loaders
@@ -21,23 +22,23 @@ class Init {
     }
   }
 
-  async listen (app: Application, port: number = 3002) {
+  async listen (app: Application, port: number = 3002): Promise<void> {
     // Create a promise to listen for errors on server listen
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       app.listen(port)
         .once('listening', () => resolve())
-        .once('error', () => reject())
+        .once('error', (e) => reject(e))
     })
   }
 
-  async start () {
+  async start (): Promise<void> {
     try {
       // Get the express app
       const app = await this.waitForLoaders()
 
       // Start listening
       await this.listen(app, config.PORT)
-      
+
       // Alert that the server is already in place
       console.log(`Server running at http://localhost:${config.PORT}/graphql 🚀`)
 
@@ -51,4 +52,6 @@ class Init {
 }
 
 export const server = Container.get(Init)
+
 server.start()
+  .catch(e => Sentry.captureException(e))

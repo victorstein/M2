@@ -1,12 +1,12 @@
 import config from '../../config'
-import SentryLoader from "../sentryLoader"
+import SentryLoader from '../sentryLoader'
 
 describe('Sentry Loader', () => {
   it('Should start without problems', () => {
     config.ENV = 'production'
     const sentry = new SentryLoader('https://username@domain/123')
     console.log = jest.fn()
-    
+
     expect(() => sentry.start()).not.toThrow()
     expect(console.log).toBeCalledWith('Sentry Initialized successfully ✅')
   })

@@ -5,7 +5,7 @@ import enforce from 'express-sslify'
 import { Service } from 'typedi'
 
 @Service()
-export default class ExpressLoader {
+class ExpressLoader {
   env: string
   app: Application
 
@@ -35,3 +35,5 @@ export default class ExpressLoader {
     }
   }
 }
+
+export default ExpressLoader
