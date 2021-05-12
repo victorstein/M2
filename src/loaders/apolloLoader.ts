@@ -1,16 +1,16 @@
-import { buildSchema } from "type-graphql"
-import { ApolloServer, CorsOptions } from "apollo-server-express"
+import { buildSchema } from 'type-graphql'
+import { ApolloServer, CorsOptions } from 'apollo-server-express'
 import config from '../config'
 import resolvers from '../resolvers'
-import Container, { Service } from "typedi"
-import { Application } from "express"
-import ExpressLoader from "./expressLoader"
+import Container, { Service } from 'typedi'
+import { Application } from 'express'
+import ExpressLoader from './expressLoader'
 
 @Service()
-export default class ApolloLoader {
+class ApolloLoader {
   corsOptions: CorsOptions
 
-  constructor (private express: ExpressLoader) {
+  constructor (private readonly express: ExpressLoader) {
     this.corsOptions = {
       credentials: true,
       origin: config.ENV === 'production' ? config.ALLOWED_ORIGINS : '*'
@@ -40,17 +40,17 @@ export default class ApolloLoader {
           const message = err.message.toLowerCase()
           /* Send class validator errors in graphQL Errors */
           if (message.includes('argument validation error')) {
-            const error = err.extensions!.exception.validationErrors.map((u: any) => u.constraints)
-            err.message = error.flatMap((u : any) => Object.values(u))
-            err.extensions!.code = 'BAD_REQUEST'
+            const error = err.extensions?.exception.validationErrors.map((u: any) => u.constraints)
+            err.message = error.flatMap((u: any) => Object.values(u))
+            if (err.extensions !== undefined) err.extensions.code = 'BAD_REQUEST'
           }
           return err
         }
       })
-  
+
       // Apply the express app to the apollo server
       server.applyMiddleware({ app, cors: this.corsOptions })
-      
+
       console.log('Apollo Initialized successfully ✅')
       return app
     } catch (e) {
@@ -59,3 +59,5 @@ export default class ApolloLoader {
     }
   }
 }
+
+export default ApolloLoader

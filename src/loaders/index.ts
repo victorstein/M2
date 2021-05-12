@@ -6,8 +6,8 @@ import SentryLoader from 'loaders/sentryLoader'
 @Service()
 class Loaders {
   constructor (
-    private sentry: SentryLoader,
-    private apollo: ApolloLoader
+    private readonly sentry: SentryLoader,
+    private readonly apollo: ApolloLoader
   ) {}
 
   async load (): Promise<Application> {
@@ -20,7 +20,7 @@ class Loaders {
 
       return app
     } catch (e) {
-      throw new Error(`There was an error initializing your loaders 💥 -> ${e.message}`)
+      throw new Error(`There was an error initializing your loaders 💥 -> ${e.message as string}`)
     }
   }
 }

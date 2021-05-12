@@ -1,8 +1,10 @@
-import { Service } from "typedi"
+import { Service } from 'typedi'
 
 @Service()
-export default class BaseService {
+class BaseService {
   hello (): String {
     return 'World'
   }
 }
+
+export default BaseService
