@@ -30,6 +30,13 @@
   "bugs": {
     "url": "https://github.com/victorstein/M2/issues"
   },
+  "ts-standard": {
+    "ignore": [
+      "dist",
+      "jest.config.ts",
+      "webpack.config.ts"
+    ]
+  },
   "homepage": "https://github.com/victorstein/M2#readme",
   "dependencies": {
     "@sentry/node": "^6.3.6",
@@ -51,6 +58,7 @@
     "@types/express-sslify": "^1.2.1",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.0.2",
+    "@types/tapable": "^2.2.2",
     "@types/webpack-node-externals": "^2.5.1",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.6",
