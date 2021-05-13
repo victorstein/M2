@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-      - name: Build the project and test linting
+      - name: Install dependencies and run linting test
         run: |
           if [ -e yarn.lock ]; then
           yarn install --frozen-lockfile
