@@ -1,18 +1,18 @@
-name: test lint
+name: test & build
 
 on:
   pull_request:
     branches: [develop]
 
 jobs:
-  test-lint:
+  run-tests-and-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-      - name: Install dependencies and run linting test
+      - name: Run tests & build the project
         run: |
           if [ -e yarn.lock ]; then
           yarn install --frozen-lockfile
@@ -21,4 +21,5 @@ jobs:
           else
           npm i
           fi
-          npm run test-lint
+          npm run test
+          npm run build
