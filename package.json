@@ -9,7 +9,8 @@
     "optimize": "webpack",
     "build": "npm run transpile && npm run optimize",
     "start": "pm2-runtime start dist/server.bundle.js -i 4 --name m2",
-    "test": "jest"
+    "test": "jest",
+    "test-lint": "ts-standard"
   },
   "repository": {
     "type": "git",
