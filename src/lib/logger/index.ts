@@ -1,8 +1,8 @@
 // import { Inject, Service } from 'typedi'
 import config from 'config'
-import SentryTransport from 'lib/logger/sentryTransport'
+import SentryTransport from './sentryTransport'
 import winston, { format } from 'winston'
-import { LogLevel } from '../../services/types/loggerServiceTypes'
+import { LogLevel } from './types/loggerServiceTypes'
 
 const LoggerService = (): winston.Logger => {
   const colors = {
