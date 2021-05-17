@@ -24,11 +24,13 @@ const {
   ALLOWED_ORIGINS,
   /* SENTRY SERVICE VARIABLES */
   SENTRY_DSN,
-  SENTRY_SERVER_NAME
+  SENTRY_SERVER_NAME,
+  /* LOGGER UTIL */
+  LOG_LEVEL
 } = process.env
 
 export default {
-  PORT: Number(PORT) ?? 3002,
+  PORT: PORT !== undefined ? Number(PORT) : 3002,
   ENV: NODE_ENV ?? 'development',
   ADMIN_EMAIL: ADMIN_EMAIL ?? null,
   TOKEN_SECRET: TOKEN_SECRET ?? null,
@@ -48,5 +50,6 @@ export default {
   EMAIL_PASSWORD_REQUEST_EXP: EMAIL_PASSWORD_REQUEST_EXP ?? '1d',
   ALLOWED_ORIGINS: ALLOWED_ORIGINS !== undefined ? ALLOWED_ORIGINS.split(',') : '*',
   SENTRY_DSN: SENTRY_DSN ?? 'invalid',
-  SENTRY_SERVER_NAME: SENTRY_SERVER_NAME ?? ''
+  SENTRY_SERVER_NAME: SENTRY_SERVER_NAME ?? '',
+  LOG_LEVEL: LOG_LEVEL ?? null
 }

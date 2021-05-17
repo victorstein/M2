@@ -1,19 +1,19 @@
 import { Application } from 'express'
 import { Service } from 'typedi'
 import ApolloLoader from 'loaders/apolloLoader'
-import SentryLoader from 'loaders/sentryLoader'
+import ContainerLoader from './containerLoader'
 
 @Service()
 class Loaders {
   constructor (
-    private readonly sentry: SentryLoader,
-    private readonly apollo: ApolloLoader
+    private readonly apollo: ApolloLoader,
+    private readonly container: ContainerLoader
   ) {}
 
   async load (): Promise<Application> {
     try {
-      // Start Sentry
-      this.sentry.start()
+      // Start the container
+      this.container.start()
 
       // Start the Apollo Instance
       const app = await this.apollo.start()

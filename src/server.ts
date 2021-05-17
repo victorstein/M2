@@ -1,10 +1,10 @@
 import 'reflect-metadata'
 import config from './config'
-import notFound from './middlewares/notFound'
 import Loaders from './loaders'
-import * as Sentry from '@sentry/node'
 import Container, { Inject, Service } from 'typedi'
 import { Application } from 'express'
+import logger from 'lib/logger'
+import Middlewares from 'middlewares/notFound'
 
 @Service()
 class Init {
@@ -43,9 +43,9 @@ class Init {
       console.log(`Server running at http://localhost:${config.PORT}/graphql 🚀`)
 
       // Handle 404
-      app.use(notFound)
+      app.use(Middlewares.notFound)
     } catch (e) {
-      Sentry.captureException(e)
+      logger.error(e)
       throw new Error(e)
     }
   }
@@ -54,4 +54,5 @@ class Init {
 export const server = Container.get(Init)
 
 server.start()
-  .catch(e => Sentry.captureException(e))
+  .then(() => console.log('Server Started'))
+  .catch(() => { /* Error being handled in the actual method */ })
