@@ -3,13 +3,15 @@ import config from '../config'
 import helmet from 'helmet'
 import enforce from 'express-sslify'
 import { Service } from 'typedi'
+import LoaderBase from './loaderBase'
 
 @Service()
-class ExpressLoader {
+class ExpressLoader extends LoaderBase {
   env: string
   app: Application
 
   constructor () {
+    super()
     this.env = config.ENV
     this.app = express()
   }
@@ -26,11 +28,11 @@ class ExpressLoader {
         app.use(enforce.HTTPS({ trustProtoHeader: true }))
       }
 
-      console.log('Express Initialized successfully ✅')
+      this.logger.info('Express Initialized successfully ✅')
 
       return app
     } catch (e) {
-      console.log('Error initializing Express: 💥 ->', e.message)
+      this.logger.error('Error initializing Express: 💥 ->', e.message)
       throw new Error(e)
     }
   }
