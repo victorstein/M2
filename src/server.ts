@@ -40,7 +40,7 @@ class Init {
       await this.listen(app, config.PORT)
 
       // Alert that the server is already in place
-      console.log(`Server running at http://localhost:${config.PORT}/graphql 🚀`)
+      logger.info(`Server running at http://localhost:${config.PORT}/graphql 🚀`)
 
       // Handle 404
       app.use(Middlewares.notFound)
