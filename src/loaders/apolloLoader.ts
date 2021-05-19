@@ -5,12 +5,19 @@ import resolvers from '../resolvers'
 import Container, { Service } from 'typedi'
 import { Application } from 'express'
 import ExpressLoader from './expressLoader'
+import { Context } from './types/apolloLoaderTypes'
+import PrismaLoader from './prismaLoader'
+import LoaderBase from './loaderBase'
 
 @Service()
-class ApolloLoader {
+class ApolloLoader extends LoaderBase {
   corsOptions: CorsOptions
 
-  constructor (private readonly express: ExpressLoader) {
+  constructor (
+    private readonly express: ExpressLoader,
+    private readonly prisma: PrismaLoader
+  ) {
+    super()
     this.corsOptions = {
       credentials: true,
       origin: config.ENV === 'production' ? config.ALLOWED_ORIGINS : '*'
@@ -28,10 +35,13 @@ class ApolloLoader {
       // Create a express app
       const app = this.express.start()
 
+      // Connect the database
+      const prisma = await this.prisma.start()
+
       // Create the server
       const server = new ApolloServer({
-        context: ({ req, res }) => {
-          return { req, res }
+        context: ({ req, res }): Context => {
+          return { req, res, prisma }
         },
         playground: config.ENV !== 'production',
         schema,
@@ -51,10 +61,10 @@ class ApolloLoader {
       // Apply the express app to the apollo server
       server.applyMiddleware({ app, cors: this.corsOptions })
 
-      console.log('Apollo Initialized successfully ✅')
+      this.logger.info('Apollo Initialized successfully ✅')
       return app
     } catch (e) {
-      console.log('Error initializing Apollo: 💥 ->', e.message)
+      this.logger.error('Error initializing Apollo: 💥 ->', e.message)
       throw new Error(e)
     }
   }
