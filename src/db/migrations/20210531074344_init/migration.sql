@@ -8,7 +8,7 @@ CREATE TABLE "Permission" (
     "description" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
-    "createdById" TEXT NOT NULL,
+    "createdById" TEXT,
 
     PRIMARY KEY ("id")
 );
@@ -20,7 +20,7 @@ CREATE TABLE "Role" (
     "description" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
-    "createdById" TEXT NOT NULL,
+    "createdById" TEXT,
 
     PRIMARY KEY ("id")
 );
@@ -35,7 +35,7 @@ CREATE TABLE "User" (
     "roleId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
-    "createdById" TEXT NOT NULL,
+    "createdById" TEXT,
 
     PRIMARY KEY ("id")
 );
@@ -59,6 +59,9 @@ CREATE UNIQUE INDEX "Permission.name_unique" ON "Permission"("name");
 CREATE UNIQUE INDEX "Role.name_unique" ON "Role"("name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User.email_unique" ON "User"("email");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "_PermissionToRole_AB_unique" ON "_PermissionToRole"("A", "B");
 
 -- CreateIndex
@@ -71,16 +74,16 @@ CREATE UNIQUE INDEX "_UserToPermission_AB_unique" ON "_UserToPermission"("A", "B
 CREATE INDEX "_UserToPermission_B_index" ON "_UserToPermission"("B");
 
 -- AddForeignKey
-ALTER TABLE "Permission" ADD FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Permission" ADD FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Role" ADD FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Role" ADD FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "User" ADD FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "User" ADD FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "User" ADD FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_PermissionToRole" ADD FOREIGN KEY ("A") REFERENCES "Permission"("id") ON DELETE CASCADE ON UPDATE CASCADE;
