@@ -5,6 +5,7 @@ import PermissionSeeder from './seeders/permissions'
 import RolesSeeder from './seeders/roles'
 import PWGenerator from 'generate-password'
 import argon from 'argon2'
+import Logger from '../lib/logger'
 
 const prisma = new PrismaClient()
 
@@ -16,33 +17,33 @@ const seederFunction = async (): Promise<void> => {
   const permissions = PermissionSeeder(prisma)
   const roles = RolesSeeder
 
-  console.log('Creating permissions... ⚙️')
+  Logger.info('Creating permissions... ⚙️')
   await prisma.permission.createMany({
     data: permissions,
     skipDuplicates: true
   })
-  console.log('Permissions created successfully... ✅')
+  Logger.info('Permissions created successfully... ✅')
 
-  console.log('Creating roles... ⚙️')
+  Logger.info('Creating roles... ⚙️')
   await prisma.role.createMany({
     data: roles,
     skipDuplicates: true
   })
-  console.log('Roles created successfully... ✅')
+  Logger.info('Roles created successfully... ✅')
 
   const adminRole = await prisma.role.findUnique({
     where: { name: Roles.ADMIN }
   })
 
   // Check if a user  with admin role exists
-  const admin = prisma.user.findFirst({
+  const admin = await prisma.user.findFirst({
     where: { role: { name: { equals: 'ADMIN' } } }
   })
 
   if (admin == null) {
     if (adminRole == null) { throw new Error('Unable to seed database. Admin role does not exist.') }
 
-    console.log('Creating admin user... ⚙️')
+    Logger.info('Creating admin user... ⚙️')
     const password = await argon.hash(PWGenerator.generate({ length: 20, numbers: true, symbols: true, strict: true }))
     await prisma.user.create({
       data: {
@@ -54,18 +55,19 @@ const seederFunction = async (): Promise<void> => {
         createdBy: {}
       }
     })
-    console.log('Admin created successfully... ✅')
+    Logger.info('Admin created successfully... ✅')
+    return
   }
 
-  console.log('Admin user already exists ✅')
+  Logger.warn('Admin user already exists ✅')
 }
 
 seederFunction()
   .catch((e) => {
-    console.log(e)
+    Logger.log(e)
     process.exit(1)
   })
   .finally(() => {
     prisma.$disconnect()
-      .catch((e) => console.log(e.message))
+      .catch((e) => Logger.error(e.message))
   })
