@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { PermissionCreateInput } from 'generated'
+import { PermissionCreateInput } from '../../generated'
 import { operations } from './types/seeders.types'
 
 const PermissionSeeder = (prisma: PrismaClient): PermissionCreateInput[] => {

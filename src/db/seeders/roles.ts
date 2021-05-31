@@ -1,5 +1,5 @@
 
-import { RoleCreateWithoutPermissionsInput, Roles } from 'generated'
+import { RoleCreateWithoutPermissionsInput, Roles } from '../../generated'
 
 const RoleSeeder: RoleCreateWithoutPermissionsInput[] = [
   {
