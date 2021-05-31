@@ -2,7 +2,7 @@
 import config from 'config'
 import SentryTransport from './sentryTransport'
 import winston, { format } from 'winston'
-import { LogLevel } from './types/loggerServiceTypes'
+import { LogLevel } from './types/logger.types'
 
 const LoggerService = (): winston.Logger => {
   const colors = {

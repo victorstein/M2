@@ -10,7 +10,7 @@ abstract class LoaderBase {
     this.logger = logger
   }
 
-  abstract start (): Promise<any> | any
+  abstract start (): Promise<void> | void
 }
 
 export default LoaderBase

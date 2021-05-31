@@ -3,9 +3,8 @@ import { ApolloServer, CorsOptions } from 'apollo-server-express'
 import config from '../config'
 import resolvers from '../resolvers'
 import Container, { Service } from 'typedi'
-import { Application } from 'express'
 import ExpressLoader from './expressLoader'
-import { Context } from './types/apolloLoaderTypes'
+import { Context } from './types/loaders.types'
 import PrismaLoader from './prismaLoader'
 import LoaderBase from './loaderBase'
 
@@ -24,7 +23,7 @@ class ApolloLoader extends LoaderBase {
     }
   }
 
-  async start (): Promise<Application> {
+  async start (): Promise<void> {
     try {
       // Create Schema
       const schema = await buildSchema({
@@ -33,15 +32,15 @@ class ApolloLoader extends LoaderBase {
       })
 
       // Create a express app
-      const app = this.express.start()
+      this.express.start()
 
       // Connect the database
-      const prisma = await this.prisma.start()
+      await this.prisma.start()
 
       // Create the server
       const server = new ApolloServer({
         context: ({ req, res }): Context => {
-          return { req, res, prisma }
+          return { req, res, prisma: this.prisma.client }
         },
         playground: config.ENV !== 'production',
         schema,
@@ -59,10 +58,9 @@ class ApolloLoader extends LoaderBase {
       })
 
       // Apply the express app to the apollo server
-      server.applyMiddleware({ app, cors: this.corsOptions })
+      server.applyMiddleware({ app: this.express.app, cors: this.corsOptions })
 
       this.logger.info('Apollo Initialized successfully ✅')
-      return app
     } catch (e) {
       this.logger.error('Error initializing Apollo: 💥 ->', e.message)
       throw new Error(e)

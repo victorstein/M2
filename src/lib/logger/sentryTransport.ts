@@ -2,7 +2,7 @@ import { Service } from 'typedi'
 import TransportStream from 'winston-transport'
 import * as Sentry from '@sentry/node'
 import config from 'config'
-import { LogLevel } from './types/loggerServiceTypes'
+import { LogLevel } from './types/logger.types'
 
 @Service()
 class SentryTransport extends TransportStream {

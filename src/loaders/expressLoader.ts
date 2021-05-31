@@ -13,10 +13,9 @@ class ExpressLoader extends LoaderBase {
   constructor () {
     super()
     this.env = config.ENV
-    this.app = express()
   }
 
-  start (): Application {
+  start (): void {
     try {
       const app = express()
 
@@ -30,7 +29,7 @@ class ExpressLoader extends LoaderBase {
 
       this.logger.info('Express Initialized successfully ✅')
 
-      return app
+      this.app = app
     } catch (e) {
       this.logger.error('Error initializing Express: 💥 ->', e.message)
       throw new Error(e)
