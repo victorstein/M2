@@ -31,6 +31,8 @@ TOKEN_EXP | JWT expiration | FALSE | 15m
 REFRESH_TOKEN_EXP | Refresh token expiration | FALSE | 1d
 DB_USER | DB User | TRUE
 DB_PASS | Database Password | TRUE
+DB_NAME | Database name | TRUE
+DATABASE_URL | Database URL | TRUE | "postgresql://${DB_USER}:${DB_PASS}@localhost:8000/${DB_NAME}"
 QUERY_COMPLEXITY_LIMIT | Limit of incoming requests complexity (nested fields) | FALSE | 20
 RATE_LIMIT_BAN_EXP | Ban period after making too many request to a throttled endpoint | FALSE | 1d
 EMAIL_PROVIDER_HOST | Email provider host | FALSE | smtp.gmail.com
