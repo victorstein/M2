@@ -1,4 +1,5 @@
-import { PrismaClient } from '.prisma/client'
+import { PrismaClient } from '@prisma/client'
+import { Roles } from 'generated'
 import PermissionSeeder from './seeders/permissions'
 import RolesSeeder from './seeders/roles'
 
@@ -9,7 +10,7 @@ const prisma = new PrismaClient()
 // TODO: Create enum file dynamically to have all possible permissions
 
 const seederFunction = async (): Promise<void> => {
-  const permissions = PermissionSeeder
+  const permissions = PermissionSeeder(prisma)
   const roles = RolesSeeder
 
   console.log('Creating permissions... ⚙️')
@@ -25,6 +26,25 @@ const seederFunction = async (): Promise<void> => {
     skipDuplicates: true
   })
   console.log('Roles created successfully... ✅')
+
+  const adminRole = await prisma.role.findUnique({
+    where: { name: Roles.ADMIN }
+  })
+
+  if (adminRole == null) { throw new Error('Unable to seed database. Admin role does not exist.') }
+
+  console.log('Creating admin user... ⚙️')
+  await prisma.user.create({
+    data: {
+      email: process.env.ADMIN_EMAIL ?? '',
+      firstName: 'Admin',
+      lastName: 'Admin',
+      password: '',
+      role: { connect: { id: adminRole.id } },
+      createdBy: {}
+    }
+  })
+  console.log('Admin created successfully... ✅')
 }
 
 seederFunction()

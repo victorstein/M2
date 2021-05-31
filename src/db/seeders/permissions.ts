@@ -1,14 +1,14 @@
-import { PrismaClient } from '.prisma/client'
-import { operations, PermissionSeed } from './types/seeders.types'
+import { PrismaClient } from '@prisma/client'
+import { PermissionCreateInput } from 'generated'
+import { operations } from './types/seeders.types'
 
-const PermissionSeeder = (): PermissionSeed[] => {
+const PermissionSeeder = (prisma: PrismaClient): PermissionCreateInput[] => {
   // Get models from Prisma metadata
-  const prisma = new PrismaClient()
   const prismaMeta = prisma as any
   const models: string[] = Object.values(prismaMeta._dmmf.modelMap).map((model: any) => model.name)
 
   // Generate permissions based on valid operations
-  const permissions: PermissionSeed[] = operations
+  const permissions: PermissionCreateInput[] = operations
     .flatMap(operation => models
       .map(model => ({
         name: `${operation}${model}s`,
@@ -19,4 +19,4 @@ const PermissionSeeder = (): PermissionSeed[] => {
   return permissions
 }
 
-export default PermissionSeeder()
+export default PermissionSeeder

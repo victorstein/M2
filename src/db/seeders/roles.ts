@@ -1,8 +1,7 @@
 
-import { Roles } from '.prisma/client'
-import { RoleSeed } from './types/seeders.types'
+import { RoleCreateWithoutPermissionsInput, Roles } from 'generated'
 
-const RoleSeeder: RoleSeed[] = [
+const RoleSeeder: RoleCreateWithoutPermissionsInput[] = [
   {
     name: Roles.ADMIN,
     description: 'Platform administrator'
