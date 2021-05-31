@@ -7,7 +7,7 @@ class BaseService {
   @Inject(CONTAINER.LOGGER) readonly logger: Logger
 
   hello (): String {
-    this.logger.info('resover info')
+    this.logger.info('resolver info')
     return 'World'
   }
 }
