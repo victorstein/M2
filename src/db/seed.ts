@@ -1,7 +1,10 @@
+import 'reflect-metadata'
 import { PrismaClient } from '@prisma/client'
-import { Roles } from 'generated'
+import { Roles } from '../generated'
 import PermissionSeeder from './seeders/permissions'
 import RolesSeeder from './seeders/roles'
+import PWGenerator from 'generate-password'
+import argon from 'argon2'
 
 const prisma = new PrismaClient()
 
@@ -31,20 +34,30 @@ const seederFunction = async (): Promise<void> => {
     where: { name: Roles.ADMIN }
   })
 
-  if (adminRole == null) { throw new Error('Unable to seed database. Admin role does not exist.') }
-
-  console.log('Creating admin user... ⚙️')
-  await prisma.user.create({
-    data: {
-      email: process.env.ADMIN_EMAIL ?? '',
-      firstName: 'Admin',
-      lastName: 'Admin',
-      password: '',
-      role: { connect: { id: adminRole.id } },
-      createdBy: {}
-    }
+  // Check if a user  with admin role exists
+  const admin = prisma.user.findFirst({
+    where: { role: { name: { equals: 'ADMIN' } } }
   })
-  console.log('Admin created successfully... ✅')
+
+  if (admin == null) {
+    if (adminRole == null) { throw new Error('Unable to seed database. Admin role does not exist.') }
+
+    console.log('Creating admin user... ⚙️')
+    const password = await argon.hash(PWGenerator.generate({ length: 20, numbers: true, symbols: true, strict: true }))
+    await prisma.user.create({
+      data: {
+        email: process.env.ADMIN_EMAIL ?? '',
+        firstName: 'Admin',
+        lastName: 'Admin',
+        password,
+        role: { connect: { id: adminRole.id } },
+        createdBy: {}
+      }
+    })
+    console.log('Admin created successfully... ✅')
+  }
+
+  console.log('Admin user already exists ✅')
 }
 
 seederFunction()
@@ -54,5 +67,5 @@ seederFunction()
   })
   .finally(() => {
     prisma.$disconnect()
-      .catch((e) => console.log(e))
+      .catch((e) => console.log(e.message))
   })
