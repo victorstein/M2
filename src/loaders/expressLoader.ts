@@ -13,23 +13,20 @@ class ExpressLoader extends LoaderBase {
   constructor () {
     super()
     this.env = config.ENV
+    this.app = express()
   }
 
   start (): void {
     try {
-      const app = express()
-
       // Basic security for production
       if (this.env === 'production') {
-        app.use(helmet())
-        app.use(json({ limit: '200kb' }))
-        app.disable('x-powered-by')
-        app.use(enforce.HTTPS({ trustProtoHeader: true }))
+        this.app.use(helmet())
+        this.app.use(json({ limit: '200kb' }))
+        this.app.disable('x-powered-by')
+        this.app.use(enforce.HTTPS({ trustProtoHeader: true }))
       }
 
       this.logger.info('Express Initialized successfully ✅')
-
-      this.app = app
     } catch (e) {
       this.logger.error('Error initializing Express: 💥 ->', e.message)
       throw new Error(e)

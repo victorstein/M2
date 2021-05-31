@@ -6,6 +6,11 @@ import LoaderBase from './loaderBase'
 class PrismaLoader extends LoaderBase {
   client: PrismaClient
 
+  constructor () {
+    super()
+    this.client = new PrismaClient()
+  }
+
   invokeListeners (): void {
     this.client.$use(async (params, next) => {
       if (params.action === 'create' || params.action === 'createMany') {
@@ -18,12 +23,9 @@ class PrismaLoader extends LoaderBase {
 
   async start (): Promise<void> {
     try {
-      const prisma = new PrismaClient()
-      this.client = prisma
-
       this.invokeListeners()
 
-      await prisma.$connect()
+      await this.client.$connect()
 
       this.logger.info('Prisma Initialized successfully ✅')
     } catch (e) {
