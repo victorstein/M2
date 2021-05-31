@@ -12,7 +12,8 @@
     "migrate": "npx prisma migrate dev",
     "studio": "npx prisma studio",
     "test": "jest --passWithNoTests",
-    "test-lint": "ts-standard"
+    "test-lint": "ts-standard",
+    "seed": "npx prisma db seed --preview-feature"
   },
   "repository": {
     "type": "git",
