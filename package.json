@@ -54,6 +54,7 @@
     "dotenv": "^9.0.2",
     "express": "^4.17.1",
     "express-sslify": "^1.2.0",
+    "generate-password": "^1.6.0",
     "graphql": "^15.5.0",
     "graphql-fields": "^2.0.3",
     "graphql-scalars": "^1.9.3",
