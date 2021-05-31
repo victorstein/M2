@@ -3,6 +3,7 @@ import { Service } from 'typedi'
 import ApolloLoader from 'loaders/apolloLoader'
 import ContainerLoader from './containerLoader'
 import ExpressLoader from './expressLoader'
+import logger from 'lib/logger'
 
 @Service()
 class Loaders {
@@ -22,7 +23,8 @@ class Loaders {
 
       return this.express.app
     } catch (e) {
-      throw new Error(`There was an error initializing your loaders 💥 -> ${e.message as string}`)
+      logger.error('Error initializing Loaders 💥')
+      throw new Error(e.message)
     }
   }
 }

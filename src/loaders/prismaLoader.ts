@@ -30,7 +30,7 @@ class PrismaLoader extends LoaderBase {
       this.logger.info('Prisma Initialized successfully ✅')
     } catch (e) {
       this.logger.error('Error initializing Prisma: 💥 ->', e.message)
-      throw new Error(e)
+      throw new Error(e.message)
     }
   }
 }

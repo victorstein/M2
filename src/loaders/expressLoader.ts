@@ -28,8 +28,8 @@ class ExpressLoader extends LoaderBase {
 
       this.logger.info('Express Initialized successfully ✅')
     } catch (e) {
-      this.logger.error('Error initializing Express: 💥 ->', e.message)
-      throw new Error(e)
+      this.logger.error('Error initializing Express 💥')
+      throw new Error(e.message)
     }
   }
 }

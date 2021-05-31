@@ -62,8 +62,8 @@ class ApolloLoader extends LoaderBase {
 
       this.logger.info('Apollo Initialized successfully ✅')
     } catch (e) {
-      this.logger.error('Error initializing Apollo: 💥 ->', e.message)
-      throw new Error(e)
+      this.logger.error('Error initializing Apollo 💥')
+      throw new Error(e.message)
     }
   }
 }

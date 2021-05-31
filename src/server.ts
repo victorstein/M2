@@ -11,17 +11,6 @@ class Init {
   @Inject()
   loaders: Loaders
 
-  async waitForLoaders (): Promise<Application> {
-    try {
-      // Initialize all the loaders
-      const app = await this.loaders.load()
-
-      return app
-    } catch (e) {
-      throw new Error(e)
-    }
-  }
-
   async listen (app: Application, port: number = 3002): Promise<void> {
     // Create a promise to listen for errors on server listen
     return await new Promise((resolve, reject) => {
@@ -33,8 +22,8 @@ class Init {
 
   async start (): Promise<void> {
     try {
-      // Get the express app
-      const app = await this.waitForLoaders()
+      // Initialize all the loaders
+      const app = await this.loaders.load()
 
       // Start listening
       await this.listen(app, config.PORT)
@@ -45,7 +34,7 @@ class Init {
       // Handle 404
       app.use(Middlewares.notFound)
     } catch (e) {
-      logger.error(e)
+      logger.error(e.message)
       throw new Error(e)
     }
   }
