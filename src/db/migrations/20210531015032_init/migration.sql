@@ -1,10 +1,14 @@
+-- CreateEnum
+CREATE TYPE "Roles" AS ENUM ('ADMIN', 'USER');
+
 -- CreateTable
 CREATE TABLE "Permission" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
+    "description" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
+    "createdById" TEXT NOT NULL,
 
     PRIMARY KEY ("id")
 );
@@ -12,10 +16,11 @@ CREATE TABLE "Permission" (
 -- CreateTable
 CREATE TABLE "Role" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
+    "name" "Roles" NOT NULL,
     "description" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
+    "createdById" TEXT NOT NULL,
 
     PRIMARY KEY ("id")
 );
@@ -30,6 +35,7 @@ CREATE TABLE "User" (
     "roleId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
+    "createdById" TEXT NOT NULL,
 
     PRIMARY KEY ("id")
 );
@@ -41,10 +47,16 @@ CREATE TABLE "_PermissionToRole" (
 );
 
 -- CreateTable
-CREATE TABLE "_PermissionToUser" (
+CREATE TABLE "_UserToPermission" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Permission.name_unique" ON "Permission"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Role.name_unique" ON "Role"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_PermissionToRole_AB_unique" ON "_PermissionToRole"("A", "B");
@@ -53,13 +65,22 @@ CREATE UNIQUE INDEX "_PermissionToRole_AB_unique" ON "_PermissionToRole"("A", "B
 CREATE INDEX "_PermissionToRole_B_index" ON "_PermissionToRole"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_PermissionToUser_AB_unique" ON "_PermissionToUser"("A", "B");
+CREATE UNIQUE INDEX "_UserToPermission_AB_unique" ON "_UserToPermission"("A", "B");
 
 -- CreateIndex
-CREATE INDEX "_PermissionToUser_B_index" ON "_PermissionToUser"("B");
+CREATE INDEX "_UserToPermission_B_index" ON "_UserToPermission"("B");
+
+-- AddForeignKey
+ALTER TABLE "Permission" ADD FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Role" ADD FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "User" ADD FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "User" ADD FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_PermissionToRole" ADD FOREIGN KEY ("A") REFERENCES "Permission"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -68,7 +89,7 @@ ALTER TABLE "_PermissionToRole" ADD FOREIGN KEY ("A") REFERENCES "Permission"("i
 ALTER TABLE "_PermissionToRole" ADD FOREIGN KEY ("B") REFERENCES "Role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_PermissionToUser" ADD FOREIGN KEY ("A") REFERENCES "Permission"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_UserToPermission" ADD FOREIGN KEY ("A") REFERENCES "Permission"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_PermissionToUser" ADD FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_UserToPermission" ADD FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
