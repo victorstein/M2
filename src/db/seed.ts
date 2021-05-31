@@ -64,7 +64,7 @@ const seederFunction = async (): Promise<void> => {
 
 seederFunction()
   .catch((e) => {
-    Logger.log(e)
+    Logger.error(e)
     process.exit(1)
   })
   .finally(() => {
