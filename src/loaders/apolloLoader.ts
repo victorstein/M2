@@ -2,22 +2,22 @@ import { buildSchema } from 'type-graphql'
 import { ApolloServer, CorsOptions } from 'apollo-server-express'
 import config from '../config'
 import resolvers from '../resolvers'
-import Container, { Service } from 'typedi'
+import Container, { Inject, Service } from 'typedi'
 import { Application } from 'express'
+import { ContainerTypes, Context, ILoader } from './types/loadersTypes'
+import { Logger } from 'winston'
 import ExpressLoader from './expressLoader'
-import { Context } from './types/apolloLoaderTypes'
 import PrismaLoader from './prismaLoader'
-import LoaderBase from './loaderBase'
 
 @Service()
-class ApolloLoader extends LoaderBase {
+class ApolloLoader implements ILoader {
   corsOptions: CorsOptions
 
   constructor (
     private readonly express: ExpressLoader,
-    private readonly prisma: PrismaLoader
+    private readonly prisma: PrismaLoader,
+    @Inject(ContainerTypes.LOGGER) readonly logger: Logger
   ) {
-    super()
     this.corsOptions = {
       credentials: true,
       origin: config.ENV === 'production' ? config.ALLOWED_ORIGINS : '*'
@@ -36,12 +36,12 @@ class ApolloLoader extends LoaderBase {
       const app = this.express.start()
 
       // Connect the database
-      const prisma = await this.prisma.start()
+      await this.prisma.start()
 
       // Create the server
       const server = new ApolloServer({
         context: ({ req, res }): Context => {
-          return { req, res, prisma }
+          return { req, res }
         },
         playground: config.ENV !== 'production',
         schema,

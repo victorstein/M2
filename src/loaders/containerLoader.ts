@@ -1,12 +1,29 @@
-import LoggerService from 'lib/logger'
-import Container, { Service } from 'typedi'
-import LoaderBase from './loaderBase'
+import logger from 'lib/logger'
+import notFound from 'middlewares/notFound'
+import Container from 'typedi'
+import { Logger } from 'winston'
+import { ContainerTypes } from './types/loadersTypes'
+import { mock } from 'jest-mock-extended'
+import { RequestHandler } from 'express-serve-static-core'
+import config from 'config'
 
-@Service()
-class ContainerLoader extends LoaderBase {
+class ContainerLoader {
+  private setAPPScopes (): void {
+    // App Scope
+    Container.set(ContainerTypes.LOGGER, logger)
+    Container.set(ContainerTypes.NOTFOUND, notFound)
+  }
+
+  private setTestScopes (): void {
+    // Test Scope
+    Container.set(ContainerTypes.LOGGER, mock<Logger>())
+    Container.set(ContainerTypes.NOTFOUND, mock<RequestHandler>())
+  }
+
   start (): void {
-    Container.set('logger', LoggerService)
-    this.logger.info('Container Initialized successfully ✅')
+    if (config.ENV === 'test') this.setTestScopes()
+    else this.setAPPScopes()
+    logger.info('Container Initialized successfully ✅')
   }
 }
 

@@ -2,16 +2,18 @@ import express, { json, Application } from 'express'
 import config from '../config'
 import helmet from 'helmet'
 import enforce from 'express-sslify'
-import { Service } from 'typedi'
-import LoaderBase from './loaderBase'
+import { Inject, Service } from 'typedi'
+import { ContainerTypes, ILoader } from './types/loadersTypes'
+import { Logger } from 'winston'
 
 @Service()
-class ExpressLoader extends LoaderBase {
+class ExpressLoader implements ILoader {
   env: string
   app: Application
 
-  constructor () {
-    super()
+  constructor (
+    @Inject(ContainerTypes.LOGGER) readonly logger: Logger
+  ) {
     this.env = config.ENV
     this.app = express()
   }

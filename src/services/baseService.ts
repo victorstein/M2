@@ -1,14 +1,15 @@
+import { ContainerTypes } from 'loaders/types/loadersTypes'
 import { Inject, Service } from 'typedi'
-import winston from 'winston'
+import { Logger } from 'winston'
 
 @Service()
 class BaseService {
   constructor (
-    @Inject('logger') readonly logger: winston.Logger
+    @Inject(ContainerTypes.LOGGER) readonly logger: Logger
   ) {}
 
   hello (): String {
-    this.logger.info('some shit')
+    this.logger.info('logging is working')
     return 'World'
   }
 }
