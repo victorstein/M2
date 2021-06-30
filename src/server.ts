@@ -2,14 +2,21 @@ import 'reflect-metadata'
 import config from './config'
 import Loaders from './loaders'
 import Container, { Inject, Service } from 'typedi'
-import { Application } from 'express'
-import logger from 'lib/logger'
-import Middlewares from 'middlewares/notFound'
+import { Application, RequestHandler } from 'express'
+import { ContainerTypes } from 'loaders/types/loadersTypes'
+import { Logger } from 'winston'
+import ContainerLoader from 'loaders/containerLoader'
 
 @Service()
 class Init {
   @Inject()
   loaders: Loaders
+
+  @Inject(ContainerTypes.NOTFOUND)
+  notFound: RequestHandler
+
+  @Inject(ContainerTypes.LOGGER)
+  logger: Logger
 
   async waitForLoaders (): Promise<Application> {
     try {
@@ -40,17 +47,19 @@ class Init {
       await this.listen(app, config.PORT)
 
       // Alert that the server is already in place
-      logger.info(`Server running at http://localhost:${config.PORT}/graphql 🚀`)
+      this.logger.info(`Server running at http://localhost:${config.PORT}/graphql 🚀`)
 
       // Handle 404
-      app.use(Middlewares.notFound)
+      app.use(this.notFound)
     } catch (e) {
-      logger.error(e)
+      this.logger.error(e)
       throw new Error(e)
     }
   }
 }
 
+// Start container
+new ContainerLoader().start()
 export const server = Container.get(Init)
 
 server.start()
