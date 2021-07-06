@@ -1,11 +1,11 @@
+import { inject, injectable } from 'inversify'
 import { ContainerTypes } from 'loaders/types/loadersTypes'
-import { Inject, Service } from 'typedi'
 import { Logger } from 'winston'
 
-@Service()
+@injectable()
 class BaseService {
   constructor (
-    @Inject(ContainerTypes.LOGGER) readonly logger: Logger
+    @inject(ContainerTypes.LOGGER) readonly logger: Logger
   ) {}
 
   hello (): String {

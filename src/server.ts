@@ -1,21 +1,21 @@
 import 'reflect-metadata'
 import config from './config'
 import Loaders from './loaders'
-import Container, { Inject, Service } from 'typedi'
 import { Application, RequestHandler } from 'express'
 import { ContainerTypes } from 'loaders/types/loadersTypes'
 import { Logger } from 'winston'
-import ContainerLoader from 'loaders/containerLoader'
+import { inject, injectable } from 'inversify'
+import containerLoader from 'loaders/containerLoader'
 
-@Service()
+@injectable()
 class Init {
-  @Inject()
+  @inject(ContainerTypes.LOADERS)
   loaders: Loaders
 
-  @Inject(ContainerTypes.NOTFOUND)
+  @inject(ContainerTypes.NOTFOUND)
   notFound: RequestHandler
 
-  @Inject(ContainerTypes.LOGGER)
+  @inject(ContainerTypes.LOGGER)
   logger: Logger
 
   async waitForLoaders (): Promise<Application> {
@@ -59,8 +59,8 @@ class Init {
 }
 
 // Start container
-new ContainerLoader().start()
-export const server = Container.get(Init)
+containerLoader.start()
+export const server = containerLoader.get(Init)
 
 server.start()
   .then(() => console.log('Server Started'))

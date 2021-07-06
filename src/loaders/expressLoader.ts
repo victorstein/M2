@@ -2,18 +2,20 @@ import express, { json, Application } from 'express'
 import config from '../config'
 import helmet from 'helmet'
 import enforce from 'express-sslify'
-import { Inject, Service } from 'typedi'
-import { ContainerTypes, ILoader } from './types/loadersTypes'
+import { ContainerTypes, ILoader, LoaderTypes } from './types/loadersTypes'
 import { Logger } from 'winston'
+import compression from 'compression'
+import { inject, injectable } from 'inversify'
 
-@Service()
-class ExpressLoader implements ILoader {
+@injectable()
+class ExpressLoader implements ILoader<LoaderTypes.EXPRESS> {
   env: string
   app: Application
 
-  constructor (
-    @Inject(ContainerTypes.LOGGER) readonly logger: Logger
-  ) {
+  @inject(ContainerTypes.LOGGER)
+  logger: Logger
+
+  constructor () {
     this.env = config.ENV
     this.app = express()
   }
@@ -26,6 +28,7 @@ class ExpressLoader implements ILoader {
       if (this.env === 'production') {
         app.use(helmet())
         app.use(json({ limit: '200kb' }))
+        app.use(compression)
         app.disable('x-powered-by')
         app.use(enforce.HTTPS({ trustProtoHeader: true }))
       }
