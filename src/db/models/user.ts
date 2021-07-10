@@ -1,14 +1,12 @@
 import { modelOptions, prop, Ref } from '@typegoose/typegoose'
 import { injectable } from 'inversify'
 import { Field, ID, ObjectType } from 'type-graphql'
-import { Model } from './model'
-import Permission from './permission'
 import Role from './role'
 
 @injectable()
 @ObjectType()
 @modelOptions({ schemaOptions: { timestamps: true } })
-class User extends Model<User> {
+class User {
   @Field(() => ID)
   id: string
 
@@ -28,15 +26,15 @@ class User extends Model<User> {
   password: string
 
   @Field(() => Role)
-  @prop({ ref: () => Role })
+  @prop({ ref: () => Role, required: true })
   role: Ref<Role>
 
-  @Field(() => [Permission], { nullable: true })
-  @prop({ ref: () => Permission })
-  permissions: Array<Ref<Permission>>
-
   @prop({ default: 1 })
-  tokenVersion: number
+  tokenVersion?: number
+
+  public get fullName (): string {
+    return `${this.firstName} ${this.lastName}`
+  }
 }
 
 export default User
