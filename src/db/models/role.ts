@@ -1,28 +1,26 @@
-import { modelOptions, prop, Ref } from '@typegoose/typegoose'
+import { modelOptions, prop } from '@typegoose/typegoose'
 import { injectable } from 'inversify'
 import { Field, ID, ObjectType } from 'type-graphql'
-import { Model } from './model'
-import Permission from './permission'
+import Base from './base'
 import { Roles } from './types/modelsTypes'
 
 @injectable()
 @ObjectType()
 @modelOptions({ schemaOptions: { timestamps: true } })
-class Role extends Model<Role> {
+class Role extends Base {
   @Field(() => ID)
   id: string
 
   @Field()
-  @prop({ required: true, enum: Roles, index: true })
-  name: Roles
+  @prop()
+  name: string
+
+  @prop({ required: true, enum: Roles, index: true, immutable: true })
+  type: Roles
 
   @Field()
   @prop({ required: true })
   description: string
-
-  @Field(() => [Permission])
-  @prop({ ref: () => Permission, required: true })
-  permissions: Array<Ref<Permission>>
 }
 
 export default Role
