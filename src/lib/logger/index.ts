@@ -2,7 +2,6 @@
 import config from 'config'
 import SentryTransport from './sentryTransport'
 import winston, { format, Logger } from 'winston'
-import { LogLevel } from './types/loggerServiceTypes'
 
 const LoggerService = (): Logger => {
   const colors = {
@@ -16,13 +15,7 @@ const LoggerService = (): Logger => {
   }
 
   winston.addColors(colors)
-  const level = config.LOG_LEVEL ?? (() => {
-    switch (config.ENV) {
-      case 'production': return LogLevel.ERROR
-      case 'development': return LogLevel.SILLY
-      default: return LogLevel.INFO
-    }
-  })()
+  const level = config.LOG_LEVEL
 
   return winston.createLogger({
     level,

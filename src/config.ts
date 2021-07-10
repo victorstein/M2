@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import { LogLevel } from 'lib/logger/types/loggerServiceTypes'
 
 const {
   /* GENERAL VARIABLES */
@@ -49,5 +50,11 @@ export default {
   ALLOWED_ORIGINS: ALLOWED_ORIGINS !== undefined ? ALLOWED_ORIGINS.split(',') : '*',
   SENTRY_DSN: SENTRY_DSN ?? 'invalid',
   SENTRY_SERVER_NAME: SENTRY_SERVER_NAME ?? '',
-  LOG_LEVEL: LOG_LEVEL ?? null
+  LOG_LEVEL: LOG_LEVEL ?? (() => {
+    switch (process.env.NODE_ENV) {
+      case 'production': return LogLevel.ERROR
+      case 'development': return LogLevel.SILLY
+      default: return LogLevel.INFO
+    }
+  })()
 }
