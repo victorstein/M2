@@ -57,6 +57,7 @@
     "graphql": "^15.5.0",
     "helmet": "^4.6.0",
     "inversify": "^5.1.1",
+    "mongoose": "^5.13.2",
     "pm2": "^5.1.0",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1",
