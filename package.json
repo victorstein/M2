@@ -9,7 +9,7 @@
     "optimize": "webpack",
     "build": "npm run transpile && npm run optimize",
     "start": "pm2-runtime start dist/server.bundle.js -i 4 --name m2",
-    "seed:admin": "ts-node -r tsconfig-paths/register src/db/seeder/adminSeed.ts",
+    "setup": "ts-node -r tsconfig-paths/register src/db/seeder/adminSeed.ts",
     "test": "jest --passWithNoTests",
     "test-lint": "ts-standard"
   },
