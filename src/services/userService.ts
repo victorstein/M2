@@ -20,7 +20,7 @@ export class UserService extends Service<User> {
     this.logger.verbose(`Operation: findOneByRole. \n role: ${role}`)
     const foundRole = await this.roleService.findOneByParam({ type: role })
     if (foundRole === null) return null
-    return await this.model.findOne({ 'role': foundRole._id })
+    return await this.model.findOne({ role: foundRole._id })
   }
 
   generateTemporaryPassword (): string {

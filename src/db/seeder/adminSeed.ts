@@ -39,7 +39,7 @@ export class AdminSeed implements ISeeder {
         this.logger.verbose('Checking if ADMIN role exists...')
         let adminRole = await this.roleService.findOneByParam({ name: Roles.ADMIN })
 
-        if (!adminRole) {
+        if (adminRole === null) {
           this.logger.verbose('Admin role not found. Creating Base roles...')
           await this.roleSeeder.seed()
         }

@@ -6,20 +6,20 @@ import { Field, ObjectType } from 'type-graphql'
 import User from './user'
 
 @post<Base>('findOneAndUpdate', function (doc: any, next) {
-  const { lastErrorObject, value } = doc
+  const { lastErrorObject: { updatedExisting }, value } = doc
   const base: DocumentType<Base> = value
   const userId: Ref<User> = containerLoader.get(ContainerTypes.USER_CONTEXT)
 
-  const isNew = !lastErrorObject.updatedExisting
+  const isNew = updatedExisting !== true
 
-  if (isNew && userId) {
+  if (isNew && userId !== null) {
     // Set the createdby value
     base.set({ createdBy: userId })
     return base.save({ validateBeforeSave: false })
       .then(() => next())
   }
 
-  if (!isNew && userId) {
+  if (!isNew && userId !== null) {
     // Set the lastUpdatedBy value
     base.set({ lastUpdatedBy: userId })
     return base.save({ validateBeforeSave: false })
@@ -31,8 +31,8 @@ import User from './user'
 
 @pre<Base>('validate', function (next) {
   const userId: Ref<User> = containerLoader.get(ContainerTypes.USER_CONTEXT)
-  
-  if (this.isNew && userId) {
+
+  if (this.isNew && userId !== undefined) {
     this.createdBy = userId
     return next()
   }
