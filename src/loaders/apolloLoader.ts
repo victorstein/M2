@@ -2,41 +2,24 @@ import { buildSchema } from 'type-graphql'
 import { ApolloServer, CorsOptions } from 'apollo-server-express'
 import config from '../config'
 import resolvers from '../resolvers'
-import Container, { Inject, Service } from 'typedi'
-import { Application } from 'express'
-import { ContainerTypes, Context, ILoader } from './types/loadersTypes'
+import { ContainerTypes, Context, ILoader, LoaderTypes } from './types/loadersTypes'
 import { Logger } from 'winston'
-import ExpressLoader from './expressLoader'
-import PrismaLoader from './prismaLoader'
+import { inject, injectable } from 'inversify'
+import containerLoader from './containerLoader'
 
-@Service()
-class ApolloLoader implements ILoader {
+@injectable()
+class ApolloLoader implements ILoader<LoaderTypes.APOLLO> {
   corsOptions: CorsOptions
+  @inject(ContainerTypes.LOGGER)
+  logger: Logger
 
-  constructor (
-    private readonly express: ExpressLoader,
-    private readonly prisma: PrismaLoader,
-    @Inject(ContainerTypes.LOGGER) readonly logger: Logger
-  ) {
-    this.corsOptions = {
-      credentials: true,
-      origin: config.ENV === 'production' ? config.ALLOWED_ORIGINS : '*'
-    }
-  }
-
-  async start (): Promise<Application> {
+  async start (): Promise<ApolloServer> {
     try {
       // Create Schema
       const schema = await buildSchema({
         resolvers,
-        container: Container
+        container: containerLoader
       })
-
-      // Create a express app
-      const app = this.express.start()
-
-      // Connect the database
-      await this.prisma.start()
 
       // Create the server
       const server = new ApolloServer({
@@ -58,11 +41,8 @@ class ApolloLoader implements ILoader {
         }
       })
 
-      // Apply the express app to the apollo server
-      server.applyMiddleware({ app, cors: this.corsOptions })
-
       this.logger.info('Apollo Initialized successfully ✅')
-      return app
+      return server
     } catch (e) {
       this.logger.error('Error initializing Apollo: 💥 ->', e.message)
       throw new Error(e)

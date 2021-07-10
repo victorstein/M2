@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import { LogLevel } from 'lib/logger/types/loggerServiceTypes'
 
 const {
   /* GENERAL VARIABLES */
@@ -9,8 +10,7 @@ const {
   REFRESH_TOKEN_SECRET,
   TOKEN_EXP,
   REFRESH_TOKEN_EXP,
-  DB_USER,
-  DB_PASS,
+  DB_URL,
   QUERY_COMPLEXITY_LIMIT,
   RATE_LIMIT_BAN_EXP,
   /* EMAIL SERVICE VARIABLES */
@@ -37,8 +37,7 @@ export default {
   REFRESH_TOKEN_SECRET: REFRESH_TOKEN_SECRET ?? null,
   TOKEN_EXP: TOKEN_EXP ?? '15m',
   REFRESH_TOKEN_EXP: REFRESH_TOKEN_EXP ?? '1d',
-  DB_USER: DB_USER ?? null,
-  DB_PASS: DB_PASS ?? null,
+  DB_URL: DB_URL ?? '',
   QUERY_COMPLEXITY_LIMIT: QUERY_COMPLEXITY_LIMIT ?? 20,
   RATE_LIMIT_BAN_EXP: RATE_LIMIT_BAN_EXP ?? '1d',
   EMAIL_PROVIDER_HOST: EMAIL_PROVIDER_HOST ?? 'smtp.gmail.com',
@@ -51,5 +50,11 @@ export default {
   ALLOWED_ORIGINS: ALLOWED_ORIGINS !== undefined ? ALLOWED_ORIGINS.split(',') : '*',
   SENTRY_DSN: SENTRY_DSN ?? 'invalid',
   SENTRY_SERVER_NAME: SENTRY_SERVER_NAME ?? '',
-  LOG_LEVEL: LOG_LEVEL ?? null
+  LOG_LEVEL: LOG_LEVEL ?? (() => {
+    switch (process.env.NODE_ENV) {
+      case 'production': return LogLevel.ERROR
+      case 'development': return LogLevel.SILLY
+      default: return LogLevel.INFO
+    }
+  })()
 }
