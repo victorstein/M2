@@ -11,18 +11,22 @@ export const ContainerTypes = {
   // Util types
   LOGGER: Symbol.for('LOGGER'),
   NOTFOUND: Symbol.for('NOT_FOUND'),
+  ROLE_SEEDER: Symbol.for('ROLE_SEEDER'),
   // Loader types
   APOLLO_LOADER: Symbol.for('APOLLO_LOADER'),
   EXPRESS_LOADER: Symbol.for('EXPRESS_LOADER'),
   MONGO_LOADER: Symbol.for('MONGO_LOADER'),
   LOADERS: Symbol.for('LOADERS'),
   // Service types
-  BASE_SERVICE: Symbol.for('BASE_SERVICE'),
   USER_SERVICE: Symbol.for('USER_SERVICE'),
+  ROLE_SERVICE: Symbol.for('ROLE_SERVICE'),
+  PERMISSION_SERVICE: Symbol.for('PERMISSION_SERVICE'),
   // Model types
   USER_MODEL: Symbol.for('USER_MODEL'),
   ROLE_MODEL: Symbol.for('ROLE_MODEL'),
-  PERMISSION_MODEL: Symbol.for('PERMISSION_MODEL')
+  PERMISSION_MODEL: Symbol.for('PERMISSION_MODEL'),
+  // Context types
+  USER_CONTEXT: Symbol.for('USER_CONTEXT')
 }
 
 export enum LoaderTypes {
