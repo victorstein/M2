@@ -51,6 +51,7 @@
     "class-validator": "^0.13.1",
     "compression": "^1.7.4",
     "dotenv": "^9.0.2",
+    "event-dispatch": "^0.4.1",
     "express": "^4.17.1",
     "express-sslify": "^1.2.0",
     "generate-password": "^1.6.0",

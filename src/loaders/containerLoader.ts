@@ -7,7 +7,7 @@ import { RequestHandler } from 'express-serve-static-core'
 import config from 'config'
 import ExpressLoader from './expressLoader'
 import MongoLoader from './mongoLoader'
-import { Container } from 'inversify'
+import { Container, decorate, injectable } from 'inversify'
 import Loaders from 'loaders'
 import { UserService } from 'services/userService'
 import { getModelForClass } from '@typegoose/typegoose'
@@ -16,6 +16,10 @@ import User from 'db/models/user'
 import Role from 'db/models/role'
 import ApolloLoader from './apolloLoader'
 import { RoleSeeder } from 'db/seeder/roleSeed'
+import { EventDispatcher } from 'event-dispatch'
+
+// Load subscriber dependencies
+import 'subscribers/emailSubscriber'
 
 class ContainerLoader extends Container implements ILoader<LoaderTypes.VOID> {
   logger: Logger
@@ -27,12 +31,16 @@ class ContainerLoader extends Container implements ILoader<LoaderTypes.VOID> {
   }
 
   private setAPPScopes (): void {
+    // Decorate class coming from dependency
+    decorate(injectable(), EventDispatcher)
+
     // Context injection
     this.bind(ContainerTypes.USER_CONTEXT).toConstantValue(undefined)
     // Utility injections
     this.bind(ContainerTypes.LOGGER).toConstantValue(LoggerService)
     this.bind(ContainerTypes.NOTFOUND).toConstantValue(notFound)
     this.bind(ContainerTypes.ROLE_SEEDER).to(RoleSeeder)
+    this.bind(ContainerTypes.DISPATCHER).to(EventDispatcher)
     // Loader injections
     this.bind<ILoader<LoaderTypes.EXPRESS>>(ContainerTypes.EXPRESS_LOADER).to(ExpressLoader)
     this.bind<ILoader<LoaderTypes.APOLLO>>(ContainerTypes.APOLLO_LOADER).to(ApolloLoader)

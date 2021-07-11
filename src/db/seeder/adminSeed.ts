@@ -7,23 +7,18 @@ import MongoLoader from 'loaders/mongoLoader'
 import { ContainerTypes } from 'loaders/types/loadersTypes'
 import { RoleService } from 'services/roleService'
 import { UserService } from 'services/userService'
+import { Event, EventDispatcher, ISendTemporaryPasswordEmail } from 'subscribers/types/subscriberTypes'
 import { Logger } from 'winston'
 import { RoleSeeder } from './roleSeed'
 import { ConnectionState, ISeeder } from './types/seederTypes'
 
 @injectable()
 export class AdminSeed implements ISeeder {
-  @inject(ContainerTypes.LOGGER)
-  logger: Logger
-
-  @inject(ContainerTypes.USER_SERVICE)
-  userService: UserService
-
-  @inject(ContainerTypes.ROLE_SERVICE)
-  roleService: RoleService
-
-  @inject(ContainerTypes.ROLE_SEEDER)
-  roleSeeder: RoleSeeder
+  @inject(ContainerTypes.LOGGER) logger: Logger
+  @inject(ContainerTypes.USER_SERVICE) userService: UserService
+  @inject(ContainerTypes.ROLE_SERVICE) roleService: RoleService
+  @inject(ContainerTypes.ROLE_SEEDER) roleSeeder: RoleSeeder
+  @inject(ContainerTypes.DISPATCHER) dispatcher: EventDispatcher
 
   async seed (): Promise<void> {
     try {
@@ -50,13 +45,18 @@ export class AdminSeed implements ISeeder {
         const hashedPassword = await this.userService.hashPassword(password)
 
         this.logger.verbose('Add user to DB')
-        await this.userService.create({
+        const admin = await this.userService.create({
           firstName: 'admin',
           lastName: 'admin',
           email: config.ADMIN_EMAIL,
           password: hashedPassword,
           role: adminRole?._id
         })
+
+        this.dispatcher.dispatch<ISendTemporaryPasswordEmail>(
+          Event.SEND_TEMPORARY_PASSWORD_EMAIL,
+          { user: admin, temporaryPassword: password }
+        )
         return
       }
 

@@ -12,6 +12,7 @@ export const ContainerTypes = {
   LOGGER: Symbol.for('LOGGER'),
   NOTFOUND: Symbol.for('NOT_FOUND'),
   ROLE_SEEDER: Symbol.for('ROLE_SEEDER'),
+  DISPATCHER: Symbol.for('DISPATCHER'),
   // Loader types
   APOLLO_LOADER: Symbol.for('APOLLO_LOADER'),
   EXPRESS_LOADER: Symbol.for('EXPRESS_LOADER'),

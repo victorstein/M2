@@ -26,9 +26,10 @@ export class UserService extends Service<User> {
   generateTemporaryPassword (): string {
     this.logger.verbose('Generating temporary password')
     return generator.generate({
-      length: 15,
+      length: 30,
       numbers: true,
-      strict: true
+      strict: true,
+      symbols: true
     })
   }
 
