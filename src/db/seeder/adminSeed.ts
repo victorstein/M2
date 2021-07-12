@@ -1,13 +1,16 @@
-import { mongoose } from '@typegoose/typegoose'
+import { User } from '@sentry/node'
+import { DocumentType, mongoose } from '@typegoose/typegoose'
 import config from 'config'
 import { Roles } from 'db/models/types/modelsTypes'
 import { inject, injectable } from 'inversify'
 import ContainerLoader from 'loaders/containerLoader'
+import { EmailLoader } from 'loaders/emailLoader'
 import MongoLoader from 'loaders/mongoLoader'
+import { SubscriberLoader } from 'loaders/subscriberLoader'
 import { ContainerTypes } from 'loaders/types/loadersTypes'
 import { RoleService } from 'services/roleService'
 import { UserService } from 'services/userService'
-import { Event, EventDispatcher, ISendTemporaryPasswordEmail } from 'subscribers/types/subscriberTypes'
+import { Event, EventDispatcher } from 'subscribers/types/subscriberTypes'
 import { Logger } from 'winston'
 import { RoleSeeder } from './roleSeed'
 import { ConnectionState, ISeeder } from './types/seederTypes'
@@ -50,12 +53,13 @@ export class AdminSeed implements ISeeder {
           lastName: 'admin',
           email: config.ADMIN_EMAIL,
           password: hashedPassword,
-          role: adminRole?._id
+          role: adminRole?._id,
+          emailVerified: true
         })
 
-        this.dispatcher.dispatch<ISendTemporaryPasswordEmail>(
-          Event.SEND_TEMPORARY_PASSWORD_EMAIL,
-          { user: admin, temporaryPassword: password }
+        this.dispatcher.dispatch<DocumentType<User>>(
+          Event.SEND_PASSWORD_RESET_EMAIL,
+          admin
         )
         return
       }
@@ -74,16 +78,23 @@ export class AdminSeed implements ISeeder {
   container.start()
   const adminSeed = container.get(AdminSeed)
   const mongoLoader = container.get(MongoLoader)
+  const emailLoader = container.get(EmailLoader)
+  const subscriberLoader = container.get(SubscriberLoader)
 
   // Start db connection
   if (mongoose.connection.readyState === ConnectionState.DISCONNECTED) {
     await mongoLoader.start()
   }
 
+  // Start email services
+  await emailLoader.start()
+
+  // Start subscribers
+  subscriberLoader.start()
+
   // Start container
   await adminSeed.seed()
 })()
-  .then(() => process.exit())
   .catch((e) => {
     console.error(e.message)
     process.exit(1)
