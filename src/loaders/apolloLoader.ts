@@ -5,7 +5,7 @@ import { ContainerTypes, Context, ILoader } from './types/loadersTypes'
 import { Logger } from 'winston'
 import { inject, injectable } from 'inversify'
 import containerLoader from './containerLoader'
-import { resolve } from 'path'
+import { join } from 'path'
 
 @injectable()
 class ApolloLoader implements ILoader<Promise<ApolloServer>> {
@@ -17,7 +17,7 @@ class ApolloLoader implements ILoader<Promise<ApolloServer>> {
     try {
       // Create Schema
       const schema = await buildSchema({
-        resolvers: [resolve(__dirname, '../resolvers/**/*.ts')],
+        resolvers: [join(__dirname, '..', 'resolvers/**/*.ts')],
         container: containerLoader
       })
 
