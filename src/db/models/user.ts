@@ -18,7 +18,7 @@ class User {
   @prop({ required: true })
   lastName: string
 
-  @Field()
+  @Field({ nullable: false })
   @prop({ required: true, lowercase: true })
   email: string
 
@@ -30,7 +30,11 @@ class User {
   role: Ref<Role>
 
   @prop({ default: 1 })
-  tokenVersion?: number
+  tokenVersion: number
+
+  @Field()
+  @prop({ default: false })
+  emailVerified: boolean
 
   public get fullName (): string {
     return `${this.firstName} ${this.lastName}`

@@ -29,7 +29,8 @@ TOKEN_SECRET | Secret used to encrypt JWT | TRUE
 REFRESH_TOKEN_SECRET | Secret used to encrypt Refresh token | TRUE
 TOKEN_EXP | JWT expiration | FALSE | 15m
 REFRESH_TOKEN_EXP | Refresh token expiration | FALSE | 1d
-DB_URL | Database URL | True | 
+DB_URL | Database URL | True |
+DOMAIN_URL | URL of the frontend (used for email urls) | FALSE | http://localhost
 QUERY_COMPLEXITY_LIMIT | Limit of incoming requests complexity (nested fields) | FALSE | 20
 RATE_LIMIT_BAN_EXP | Ban period after making too many request to a throttled endpoint | FALSE | 1d
 EMAIL_PROVIDER_HOST | Email provider host | FALSE | smtp.gmail.com
@@ -39,6 +40,7 @@ EMAIL_PROVIDER_USER | Email address where emails will be sent from | TRUE |
 EMAIL_PROVIDER_PASS | Password of email provider user | TRUE | 
 EMAIL_VERIFICATION_EXP | Expiration of email validation upon signup | FALSE | 1w
 EMAIL_PASSWORD_REQUEST_EXP | Expiration of pasword reset request | FALSE | 1d
+EMAIL_SECRET | Secret used to decode hashed data from emails | TRUE |
 ALLOWED_ORIGINS | Comma separated strings of allowed consumers (CORS) | FALSE |
 SENTRY_DSN | Sentry DSN string | FALSE | 
 SENTRY_SERVER_NAME | Servername that will be sent to sentry | FALSE

@@ -1,14 +1,14 @@
 import { buildSchema } from 'type-graphql'
 import { ApolloServer, CorsOptions } from 'apollo-server-express'
 import config from '../config'
-import resolvers from '../resolvers'
-import { ContainerTypes, Context, ILoader, LoaderTypes } from './types/loadersTypes'
+import { ContainerTypes, Context, ILoader } from './types/loadersTypes'
 import { Logger } from 'winston'
 import { inject, injectable } from 'inversify'
 import containerLoader from './containerLoader'
+import { resolve } from 'path'
 
 @injectable()
-class ApolloLoader implements ILoader<LoaderTypes.APOLLO> {
+class ApolloLoader implements ILoader<Promise<ApolloServer>> {
   corsOptions: CorsOptions
   @inject(ContainerTypes.LOGGER)
   logger: Logger
@@ -17,7 +17,7 @@ class ApolloLoader implements ILoader<LoaderTypes.APOLLO> {
     try {
       // Create Schema
       const schema = await buildSchema({
-        resolvers,
+        resolvers: [resolve(__dirname, '../resolvers/**/*.ts')],
         container: containerLoader
       })
 
@@ -43,9 +43,9 @@ class ApolloLoader implements ILoader<LoaderTypes.APOLLO> {
 
       this.logger.info('Apollo Initialized successfully ✅')
       return server
-    } catch (e) {
-      this.logger.error('Error initializing Apollo: 💥 ->', e.message)
-      throw new Error(e)
+    } catch ({ message }) {
+      this.logger.error(`Error initializing Apollo: 💥 -> ${message as string}`)
+      throw new Error(message)
     }
   }
 }
