@@ -39,6 +39,7 @@ EMAIL_PROVIDER_USER | Email address where emails will be sent from | TRUE |
 EMAIL_PROVIDER_PASS | Password of email provider user | TRUE | 
 EMAIL_VERIFICATION_EXP | Expiration of email validation upon signup | FALSE | 1w
 EMAIL_PASSWORD_REQUEST_EXP | Expiration of pasword reset request | FALSE | 1d
+EMAIL_SECRET | Secret used to decode hashed data from emails | TRUE |
 ALLOWED_ORIGINS | Comma separated strings of allowed consumers (CORS) | FALSE |
 SENTRY_DSN | Sentry DSN string | FALSE | 
 SENTRY_SERVER_NAME | Servername that will be sent to sentry | FALSE
