@@ -1,14 +1,16 @@
+import { ApolloServer } from 'apollo-server-express'
 import config from 'config'
 import { Application } from 'express'
 import { inject, injectable } from 'inversify'
-import { ContainerTypes, ILoader, LoaderTypes } from './types/loadersTypes'
+import { Transporter } from 'nodemailer'
+import { ContainerTypes, ILoader } from './types/loadersTypes'
 @injectable()
 class Loaders {
-  constructor (
-    @inject(ContainerTypes.EXPRESS_LOADER) private readonly express: ILoader<LoaderTypes.EXPRESS>,
-    @inject(ContainerTypes.APOLLO_LOADER) private readonly apollo: ILoader<LoaderTypes.APOLLO>,
-    @inject(ContainerTypes.MONGO_LOADER) private readonly mongo: ILoader<LoaderTypes.VOID>
-  ) {}
+  @inject(ContainerTypes.EXPRESS_LOADER) private readonly express: ILoader<Application>
+  @inject(ContainerTypes.APOLLO_LOADER) private readonly apollo: ILoader<Promise<ApolloServer>>
+  @inject(ContainerTypes.MONGO_LOADER) private readonly mongo: ILoader<Promise<void>>
+  @inject(ContainerTypes.EMAIL_LOADER) private readonly email: ILoader<Promise<Transporter>>
+  @inject(ContainerTypes.SUBSCRIBER_LOADER) private readonly subscriber: ILoader<void>
 
   async load (): Promise<Application> {
     try {
@@ -17,6 +19,12 @@ class Loaders {
 
       // Connect to the DB
       await this.mongo.start()
+
+      // Initiate email transport
+      await this.email.start()
+
+      // Initiate subscribers
+      this.subscriber.start()
 
       // Start the Apollo Instance
       const server = await this.apollo.start()
