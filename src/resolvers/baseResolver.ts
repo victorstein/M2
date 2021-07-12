@@ -7,8 +7,7 @@ import { FieldResolver, Query, Resolver, Root } from 'type-graphql'
 @Resolver(() => Base)
 @injectable()
 class BaseResolver {
-  @inject(ContainerTypes.USER_SERVICE)
-  userService: UserService
+  @inject(ContainerTypes.USER_SERVICE) userService: UserService
 
   @Query(() => String)
   hello (): String {
