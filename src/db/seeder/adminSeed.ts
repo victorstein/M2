@@ -1,16 +1,15 @@
-import { User } from '@sentry/node'
-import { DocumentType, mongoose } from '@typegoose/typegoose'
+import { mongoose } from '@typegoose/typegoose'
 import config from 'config'
 import { Roles } from 'db/models/types/modelsTypes'
 import { inject, injectable } from 'inversify'
 import ContainerLoader from 'loaders/containerLoader'
 import { EmailLoader } from 'loaders/emailLoader'
 import MongoLoader from 'loaders/mongoLoader'
-import { SubscriberLoader } from 'loaders/subscriberLoader'
 import { ContainerTypes } from 'loaders/types/loadersTypes'
+import { EmailService } from 'services/emailService'
 import { RoleService } from 'services/roleService'
 import { UserService } from 'services/userService'
-import { Event, EventDispatcher } from 'subscribers/types/subscriberTypes'
+import { EventDispatcher } from 'subscribers/types/subscriberTypes'
 import { Logger } from 'winston'
 import { RoleSeeder } from './roleSeed'
 import { ConnectionState, ISeeder } from './types/seederTypes'
@@ -22,6 +21,7 @@ export class AdminSeed implements ISeeder {
   @inject(ContainerTypes.ROLE_SERVICE) roleService: RoleService
   @inject(ContainerTypes.ROLE_SEEDER) roleSeeder: RoleSeeder
   @inject(ContainerTypes.DISPATCHER) dispatcher: EventDispatcher
+  @inject(ContainerTypes.EMAIL_SERVICE) emailService: EmailService
 
   async seed (): Promise<void> {
     try {
@@ -57,10 +57,7 @@ export class AdminSeed implements ISeeder {
           emailVerified: true
         })
 
-        this.dispatcher.dispatch<DocumentType<User>>(
-          Event.SEND_PASSWORD_RESET_EMAIL,
-          admin
-        )
+        await this.emailService.sendResetPasswordEmail(admin)
         return
       }
 
@@ -76,10 +73,8 @@ export class AdminSeed implements ISeeder {
   // Start the container
   const container = ContainerLoader
   container.start()
-  const adminSeed = container.get(AdminSeed)
   const mongoLoader = container.get(MongoLoader)
   const emailLoader = container.get(EmailLoader)
-  const subscriberLoader = container.get(SubscriberLoader)
 
   // Start db connection
   if (mongoose.connection.readyState === ConnectionState.DISCONNECTED) {
@@ -89,12 +84,10 @@ export class AdminSeed implements ISeeder {
   // Start email services
   await emailLoader.start()
 
-  // Start subscribers
-  subscriberLoader.start()
-
-  // Start container
+  const adminSeed = container.get(AdminSeed)
   await adminSeed.seed()
 })()
+  .then(() => process.exit())
   .catch((e) => {
     console.error(e.message)
     process.exit(1)
