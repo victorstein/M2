@@ -29,7 +29,8 @@ TOKEN_SECRET | Secret used to encrypt JWT | TRUE
 REFRESH_TOKEN_SECRET | Secret used to encrypt Refresh token | TRUE
 TOKEN_EXP | JWT expiration | FALSE | 15m
 REFRESH_TOKEN_EXP | Refresh token expiration | FALSE | 1d
-DB_URL | Database URL | True | 
+DB_URL | Database URL | True |
+DOMAIN_URL | URL of the frontend (used for email urls) | FALSE | http://localhost
 QUERY_COMPLEXITY_LIMIT | Limit of incoming requests complexity (nested fields) | FALSE | 20
 RATE_LIMIT_BAN_EXP | Ban period after making too many request to a throttled endpoint | FALSE | 1d
 EMAIL_PROVIDER_HOST | Email provider host | FALSE | smtp.gmail.com
