@@ -2,10 +2,10 @@ import { mongoose } from '@typegoose/typegoose'
 import config from 'config'
 import { inject, injectable } from 'inversify'
 import { Logger } from 'winston'
-import { ContainerTypes, ILoader, LoaderTypes } from './types/loadersTypes'
+import { ContainerTypes, ILoader } from './types/loadersTypes'
 
 @injectable()
-class MongoLoader implements ILoader<LoaderTypes.VOID> {
+class MongoLoader implements ILoader<void> {
   @inject(ContainerTypes.LOGGER) readonly logger: Logger
 
   async start (): Promise<void> {
@@ -20,7 +20,7 @@ class MongoLoader implements ILoader<LoaderTypes.VOID> {
 
       this.logger.info('DB Connection Initialized successfully ✅')
     } catch ({ message }) {
-      this.logger.error('Error initializing mongo: 💥 ->', message)
+      this.logger.error(`Error initializing mongo: 💥 -> ${message as string}`)
       throw new Error(message)
     }
   }

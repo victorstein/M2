@@ -1,13 +1,13 @@
 import LoggerService from 'lib/logger'
 import notFound from 'lib/middlewares/notFound'
 import { Logger } from 'winston'
-import { ContainerTypes, ILoader, LoaderTypes } from './types/loadersTypes'
+import { ContainerTypes, ILoader } from './types/loadersTypes'
 import { mock } from 'jest-mock-extended'
 import { RequestHandler } from 'express-serve-static-core'
 import config from 'config'
 import ExpressLoader from './expressLoader'
 import MongoLoader from './mongoLoader'
-import { Container, decorate, injectable } from 'inversify'
+import { Container, injectable } from 'inversify'
 import Loaders from 'loaders'
 import { UserService } from 'services/userService'
 import { getModelForClass } from '@typegoose/typegoose'
@@ -16,14 +16,14 @@ import User from 'db/models/user'
 import Role from 'db/models/role'
 import ApolloLoader from './apolloLoader'
 import { RoleSeeder } from 'db/seeder/roleSeed'
-import { EventDispatcher } from 'event-dispatch'
+import { EmailLoader } from './emailLoader'
+import { EmailService } from 'services/emailService'
+import { EventDispatcher } from 'lib/decorators/EventSubscriber'
+import { SubscriberLoader } from './subscriberLoader'
 
-// Load subscriber dependencies
-import 'subscribers/emailSubscriber'
-
-class ContainerLoader extends Container implements ILoader<LoaderTypes.VOID> {
+@injectable()
+class ContainerLoader extends Container implements ILoader<void> {
   logger: Logger
-  containerInstance: Container
 
   constructor () {
     super({ autoBindInjectable: true })
@@ -31,9 +31,6 @@ class ContainerLoader extends Container implements ILoader<LoaderTypes.VOID> {
   }
 
   private setAPPScopes (): void {
-    // Decorate class coming from dependency
-    decorate(injectable(), EventDispatcher)
-
     // Context injection
     this.bind(ContainerTypes.USER_CONTEXT).toConstantValue(undefined)
     // Utility injections
@@ -42,13 +39,16 @@ class ContainerLoader extends Container implements ILoader<LoaderTypes.VOID> {
     this.bind(ContainerTypes.ROLE_SEEDER).to(RoleSeeder)
     this.bind(ContainerTypes.DISPATCHER).to(EventDispatcher)
     // Loader injections
-    this.bind<ILoader<LoaderTypes.EXPRESS>>(ContainerTypes.EXPRESS_LOADER).to(ExpressLoader)
-    this.bind<ILoader<LoaderTypes.APOLLO>>(ContainerTypes.APOLLO_LOADER).to(ApolloLoader)
-    this.bind<ILoader<LoaderTypes.VOID>>(ContainerTypes.MONGO_LOADER).to(MongoLoader)
+    this.bind(ContainerTypes.EXPRESS_LOADER).to(ExpressLoader)
+    this.bind(ContainerTypes.APOLLO_LOADER).to(ApolloLoader)
+    this.bind(ContainerTypes.MONGO_LOADER).to(MongoLoader)
+    this.bind(ContainerTypes.EMAIL_LOADER).to(EmailLoader)
+    this.bind(ContainerTypes.SUBSCRIBER_LOADER).to(SubscriberLoader)
     this.bind(ContainerTypes.LOADERS).to(Loaders)
     // Service injections
     this.bind(ContainerTypes.USER_SERVICE).to(UserService)
     this.bind(ContainerTypes.ROLE_SERVICE).to(RoleService)
+    this.bind(ContainerTypes.EMAIL_SERVICE).to(EmailService)
     // Model injections
     this.bind(ContainerTypes.USER_MODEL).toConstantValue(getModelForClass(User))
     this.bind(ContainerTypes.ROLE_MODEL).toConstantValue(getModelForClass(Role))
@@ -63,9 +63,14 @@ class ContainerLoader extends Container implements ILoader<LoaderTypes.VOID> {
   }
 
   start (): void {
-    if (config.ENV === 'test') this.setTestScopes()
-    else this.setAPPScopes()
-    this.logger.info('Container Initialized successfully ✅')
+    try {
+      if (config.ENV === 'test') this.setTestScopes()
+      else this.setAPPScopes()
+      this.logger.info('Container Initialized successfully ✅')
+    } catch ({ message }) {
+      this.logger.error(`Error initializing Container: 💥 -> ${message as string}`)
+      throw new Error(message)
+    }
   }
 }
 

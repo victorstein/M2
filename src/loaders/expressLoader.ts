@@ -2,13 +2,13 @@ import express, { json, Application } from 'express'
 import config from '../config'
 import helmet from 'helmet'
 import enforce from 'express-sslify'
-import { ContainerTypes, ILoader, LoaderTypes } from './types/loadersTypes'
+import { ContainerTypes, ILoader } from './types/loadersTypes'
 import { Logger } from 'winston'
 import compression from 'compression'
 import { inject, injectable } from 'inversify'
 
 @injectable()
-class ExpressLoader implements ILoader<LoaderTypes.EXPRESS> {
+class ExpressLoader implements ILoader<Application> {
   env: string
   app: Application
 
@@ -37,7 +37,7 @@ class ExpressLoader implements ILoader<LoaderTypes.EXPRESS> {
 
       return app
     } catch (e) {
-      this.logger.error('Error initializing Express: 💥 ->', e.message)
+      this.logger.error(`Error initializing Express: 💥 -> ${e.message as string}`)
       throw new Error(e)
     }
   }
